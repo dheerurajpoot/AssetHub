@@ -1,0 +1,450 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+	Star,
+	Heart,
+	Share2,
+	TrendingUp,
+	Calendar,
+	MessageCircle,
+} from "lucide-react";
+import axios from "axios";
+
+export default function ListingDetail() {
+	const params = useParams();
+	const router = useRouter();
+	const [listing, setListing] = useState<any>(null);
+	const [loading, setLoading] = useState(true);
+	const [isFavorite, setIsFavorite] = useState(false);
+	const [bidAmount, setBidAmount] = useState("");
+	const [bidMessage, setBidMessage] = useState("");
+	const [bids, setBids] = useState<any[]>([]);
+	const [submittingBid, setSubmittingBid] = useState(false);
+
+	useEffect(() => {
+		const fetchListing = async () => {
+			try {
+				const response = await axios.get(`/api/listings/${params.id}`);
+				const data = await response.data;
+				setListing(data);
+				setBidAmount(data?.price.toString());
+			} catch (error) {
+				console.error("Failed to fetch listing:", error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchListing();
+	}, [params.id]);
+
+	const handlePlaceBid = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		const userId = localStorage.getItem("userId");
+
+		if (!userId) {
+			router.push("/login");
+			return;
+		}
+
+		if (!bidAmount || Number.parseFloat(bidAmount) < listing?.price) {
+			alert("Bid amount must be at least the asking price");
+			return;
+		}
+
+		setSubmittingBid(true);
+		try {
+			const response = await axios.post("/api/bids", {
+				listingId: params.id,
+				bidderId: userId,
+				amount: Number.parseFloat(bidAmount),
+				message: bidMessage,
+			});
+
+			if (response.status === 200) {
+				const newBid = await response.data;
+				setBids([newBid, ...bids]);
+				setBidAmount("");
+				setBidMessage("");
+				alert("Bid placed successfully! Seller will contact you soon.");
+			}
+		} catch (error) {
+			console.error("Failed to place bid:", error);
+			alert("Failed to place bid");
+		} finally {
+			setSubmittingBid(false);
+		}
+	};
+
+	const handleContactSeller = () => {
+		if (!listing?.seller?.whatsapp || !listing?.title || !listing) {
+			alert("Seller WhatsApp not available or listing not found");
+			return;
+		}
+		const message = `Hi, I'm interested in your listing: ${listing?.title}`;
+		window.open(
+			`https://wa.me/${
+				listing.seller?.whatsapp
+			}?text=${encodeURIComponent(message)}`,
+			"_blank"
+		);
+	};
+
+	if (loading) {
+		return (
+			<div className='flex items-center justify-center min-h-screen'>
+				Loading...
+			</div>
+		);
+	}
+
+	if (!listing) {
+		return (
+			<div className='flex items-center justify-center min-h-screen'>
+				Listing not found
+			</div>
+		);
+	}
+
+	return (
+		<div className='min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-8 pb-24 md:pb-8'>
+			<div className='max-w-6xl mx-auto'>
+				{/* Header */}
+				<div className='mb-8'>
+					<Button
+						variant='ghost'
+						onClick={() => router.back()}
+						className='text-slate-300 hover:text-white mb-4'>
+						← Back
+					</Button>
+				</div>
+
+				<div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+					{/* Main Content */}
+					<div className='lg:col-span-2'>
+						{/* Image */}
+						<Card className='bg-slate-800 border-slate-700 mb-6 overflow-hidden'>
+							<div className='w-full h-96 bg-linear-to-br from-slate-700 to-slate-900 flex items-center justify-center'>
+								<div className='text-center'>
+									<TrendingUp
+										size={48}
+										className='text-blue-500 mx-auto mb-2'
+									/>
+									<p className='text-slate-400'>
+										Asset Preview
+									</p>
+								</div>
+							</div>
+						</Card>
+
+						{/* Details */}
+						<Card className='bg-slate-800 border-slate-700'>
+							<CardHeader>
+								<CardTitle className='text-white text-2xl'>
+									{listing?.title}
+								</CardTitle>
+							</CardHeader>
+							<CardContent className='space-y-6'>
+								<p className='text-slate-400'>
+									{listing.description}
+								</p>
+
+								{/* Metrics Grid */}
+								<div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+									{listing.metrics?.monthlyRevenue && (
+										<div className='p-4 bg-slate-700 rounded-lg'>
+											<p className='text-xs text-slate-400 mb-1'>
+												Monthly Revenue
+											</p>
+											<p className='text-lg font-bold text-white'>
+												$
+												{listing.metrics.monthlyRevenue.toLocaleString()}
+											</p>
+										</div>
+									)}
+									{listing.metrics?.monthlyTraffic && (
+										<div className='p-4 bg-slate-700 rounded-lg'>
+											<p className='text-xs text-slate-400 mb-1'>
+												Monthly Traffic
+											</p>
+											<p className='text-lg font-bold text-white'>
+												{listing.metrics.monthlyTraffic.toLocaleString()}
+											</p>
+										</div>
+									)}
+									{listing.metrics?.followers && (
+										<div className='p-4 bg-slate-700 rounded-lg'>
+											<p className='text-xs text-slate-400 mb-1'>
+												Followers
+											</p>
+											<p className='text-lg font-bold text-white'>
+												{listing.metrics.followers.toLocaleString()}
+											</p>
+										</div>
+									)}
+									{listing.metrics?.age && (
+										<div className='p-4 bg-slate-700 rounded-lg'>
+											<p className='text-xs text-slate-400 mb-1'>
+												Age
+											</p>
+											<p className='text-lg font-bold text-white'>
+												{listing.metrics.age} months
+											</p>
+										</div>
+									)}
+								</div>
+
+								{/* Details */}
+								{listing.details && (
+									<div className='space-y-3 pt-4 border-t border-slate-700'>
+										{listing.details.niche && (
+											<div>
+												<p className='text-xs text-slate-400'>
+													Niche
+												</p>
+												<p className='text-white'>
+													{listing.details.niche}
+												</p>
+											</div>
+										)}
+										{listing.details.monetization && (
+											<div>
+												<p className='text-xs text-slate-400'>
+													Monetization
+												</p>
+												<p className='text-white'>
+													{
+														listing.details
+															.monetization
+													}
+												</p>
+											</div>
+										)}
+										{listing.details.trafficSource && (
+											<div>
+												<p className='text-xs text-slate-400'>
+													Traffic Source
+												</p>
+												<p className='text-white'>
+													{
+														listing.details
+															.trafficSource
+													}
+												</p>
+											</div>
+										)}
+									</div>
+								)}
+							</CardContent>
+						</Card>
+					</div>
+
+					{/* Sidebar */}
+					<div className='space-y-6'>
+						{/* Price Card */}
+						<Card className='bg-linear-to-br from-blue-900 to-cyan-900 border-blue-700'>
+							<CardContent className='p-6'>
+								<p className='text-slate-300 text-sm mb-2'>
+									Asking Price
+								</p>
+								<p className='text-4xl font-bold text-white mb-6'>
+									${listing.price.toLocaleString()}
+								</p>
+
+								<div className='space-y-3'>
+									<Button
+										onClick={handleContactSeller}
+										className='w-full bg-green-600 hover:bg-green-700 text-white gap-2'>
+										<MessageCircle size={18} />
+										Contact on WhatsApp
+									</Button>
+
+									<div className='flex gap-2'>
+										<Button
+											variant='outline'
+											size='icon'
+											onClick={() =>
+												setIsFavorite(!isFavorite)
+											}
+											className='flex-1 border-slate-600 text-slate-300 hover:bg-slate-700'>
+											<Heart
+												size={20}
+												fill={
+													isFavorite
+														? "currentColor"
+														: "none"
+												}
+											/>
+										</Button>
+										<Button
+											variant='outline'
+											size='icon'
+											className='flex-1 border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent'>
+											<Share2 size={20} />
+										</Button>
+									</div>
+								</div>
+							</CardContent>
+						</Card>
+
+						{/* Bidding Card */}
+						{listing.allowBidding && (
+							<Card className='bg-slate-800 border-slate-700'>
+								<CardHeader>
+									<CardTitle className='text-white'>
+										Place a Bid
+									</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<form
+										onSubmit={handlePlaceBid}
+										className='space-y-4'>
+										<div>
+											<Label
+												htmlFor='bidAmount'
+												className='text-slate-300'>
+												Bid Amount (USD)
+											</Label>
+											<Input
+												id='bidAmount'
+												type='number'
+												min={listing.price}
+												step='100'
+												value={bidAmount}
+												onChange={(e) =>
+													setBidAmount(e.target.value)
+												}
+												className='mt-2 bg-slate-700 border-slate-600 text-white'
+												required
+											/>
+											<p className='text-xs text-slate-400 mt-1'>
+												Minimum: $
+												{listing.price.toLocaleString()}
+											</p>
+										</div>
+
+										<div>
+											<Label
+												htmlFor='bidMessage'
+												className='text-slate-300'>
+												Message (Optional)
+											</Label>
+											<textarea
+												id='bidMessage'
+												value={bidMessage}
+												onChange={(e) =>
+													setBidMessage(
+														e.target.value
+													)
+												}
+												placeholder="Tell the seller why you're interested..."
+												className='mt-2 w-full p-2 bg-slate-700 border border-slate-600 text-white rounded-md text-sm placeholder:text-slate-500'
+												rows={3}
+											/>
+										</div>
+
+										<Button
+											type='submit'
+											disabled={submittingBid}
+											className='w-full bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
+											{submittingBid
+												? "Placing Bid..."
+												: "Place Bid"}
+										</Button>
+									</form>
+								</CardContent>
+							</Card>
+						)}
+
+						{/* Seller Info */}
+						<Card className='bg-slate-800 border-slate-700'>
+							<CardHeader>
+								<CardTitle className='text-white'>
+									Seller Information
+								</CardTitle>
+							</CardHeader>
+							<CardContent className='space-y-4'>
+								<div className='flex items-center gap-3'>
+									<div className='w-12 h-12 rounded-full bg-linear-to-br from-blue-500 to-cyan-500' />
+									<div>
+										<p className='font-semibold text-white'>
+											{listing.seller?.name}
+										</p>
+										<div className='flex items-center gap-1'>
+											<Star
+												size={14}
+												className='text-yellow-500'
+												fill='currentColor'
+											/>
+											<span className='text-sm text-slate-400'>
+												{listing.seller?.rating || 0}{" "}
+												rating
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div className='grid grid-cols-2 gap-3 pt-4 border-t border-slate-700'>
+									<div>
+										<p className='text-xs text-slate-400'>
+											Sales
+										</p>
+										<p className='font-bold text-white'>
+											{listing.seller?.totalSales || 0}
+										</p>
+									</div>
+									<div>
+										<p className='text-xs text-slate-400'>
+											Listings
+										</p>
+										<p className='font-bold text-white'>
+											{listing.seller?.totalListings || 0}
+										</p>
+									</div>
+								</div>
+
+								<Button
+									variant='outline'
+									className='w-full border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent'>
+									View Profile
+								</Button>
+							</CardContent>
+						</Card>
+
+						{/* Stats */}
+						<Card className='bg-slate-800 border-slate-700'>
+							<CardContent className='p-6 space-y-3'>
+								<div className='flex items-center justify-between'>
+									<span className='text-slate-400 flex items-center gap-2'>
+										<TrendingUp size={16} />
+										Views
+									</span>
+									<span className='font-bold text-white'>
+										{listing.views}
+									</span>
+								</div>
+								<div className='flex items-center justify-between'>
+									<span className='text-slate-400 flex items-center gap-2'>
+										<Calendar size={16} />
+										Listed
+									</span>
+									<span className='font-bold text-white'>
+										{new Date(
+											listing.createdAt
+										).toLocaleDateString()}
+									</span>
+								</div>
+							</CardContent>
+						</Card>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
