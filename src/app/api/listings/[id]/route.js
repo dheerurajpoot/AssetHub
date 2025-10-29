@@ -18,7 +18,7 @@ export async function GET(request, { params }) {
 
 		if (!listing) {
 			return NextResponse.json(
-				{ error: "Listing not found" },
+				{ message: "Listing not found" },
 				{ status: 404 }
 			);
 		}
@@ -27,7 +27,7 @@ export async function GET(request, { params }) {
 	} catch (error) {
 		console.error("Listing fetch error:", error);
 		return NextResponse.json(
-			{ error: "Failed to fetch listing" },
+			{ message: "Failed to fetch listing" },
 			{ status: 500 }
 		);
 	}
@@ -39,7 +39,7 @@ export async function PUT(request, { params }) {
 
 		if (!userId) {
 			return NextResponse.json(
-				{ error: "Unauthorized" },
+				{ message: "Unauthorized" },
 				{ status: 401 }
 			);
 		}
@@ -49,7 +49,7 @@ export async function PUT(request, { params }) {
 		const listing = await Listing.findById(params.id);
 		if (!listing || listing.seller.toString() !== userId) {
 			return NextResponse.json(
-				{ error: "Unauthorized" },
+				{ message: "Unauthorized" },
 				{ status: 401 }
 			);
 		}
@@ -62,7 +62,7 @@ export async function PUT(request, { params }) {
 	} catch (error) {
 		console.error("Listing update error:", error);
 		return NextResponse.json(
-			{ error: "Failed to update listing" },
+			{ message: "Failed to update listing" },
 			{ status: 500 }
 		);
 	}
@@ -74,7 +74,7 @@ export async function DELETE(request, { params }) {
 
 		if (!userId) {
 			return NextResponse.json(
-				{ error: "Unauthorized" },
+				{ message: "Unauthorized" },
 				{ status: 401 }
 			);
 		}
@@ -84,7 +84,7 @@ export async function DELETE(request, { params }) {
 		const listing = await Listing.findById(params.id);
 		if (!listing || listing.seller.toString() !== userId) {
 			return NextResponse.json(
-				{ error: "Unauthorized" },
+				{ message: "Unauthorized" },
 				{ status: 401 }
 			);
 		}
@@ -98,7 +98,7 @@ export async function DELETE(request, { params }) {
 	} catch (error) {
 		console.error("Listing deletion error:", error);
 		return NextResponse.json(
-			{ error: "Failed to delete listing" },
+			{ message: "Failed to delete listing" },
 			{ status: 500 }
 		);
 	}

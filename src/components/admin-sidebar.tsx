@@ -15,8 +15,10 @@ import {
 	TrendingUp,
 	MessageSquare,
 } from "lucide-react";
+import { userContext } from "@/context/userContext";
 
 export default function AdminSidebar() {
+	const { signOut } = userContext();
 	const pathname = usePathname();
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -25,14 +27,12 @@ export default function AdminSidebar() {
 		{ icon: FileText, label: "Listings", href: "/admin/listings" },
 		{ icon: Users, label: "Users", href: "/admin/users" },
 		{ icon: MessageSquare, label: "Bids", href: "/admin/bids" },
-		{ icon: TrendingUp, label: "Analytics", href: "/admin/analytics" },
-		{ icon: Settings, label: "Settings", href: "/admin/settings" },
+		// { icon: TrendingUp, label: "Analytics", href: "/admin/analytics" },
+		// { icon: Settings, label: "Settings", href: "/admin/settings" },
 	];
 
-	const handleLogout = () => {
-		localStorage.removeItem("userId");
-		localStorage.removeItem("userName");
-		localStorage.removeItem("userRole");
+	const handleLogout = async () => {
+		await signOut();
 		window.location.href = "/";
 	};
 

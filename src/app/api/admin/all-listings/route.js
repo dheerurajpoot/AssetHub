@@ -7,26 +7,28 @@ export async function GET(request) {
 	try {
 		const { searchParams } = new URL(request.url);
 		const adminId = searchParams.get("adminId");
+		const status = searchParams.get("status");
 
 		await connectDB();
 
 		const admin = await User.findById(adminId);
 		if (!admin || admin.role !== "admin") {
 			return NextResponse.json(
-				{ message: "Unauthorized" },
+				{ error: "Unauthorized" },
 				{ status: 401 }
 			);
 		}
 
-		const listings = await Listing.find()
+		const query = status ? { status } : {};
+		const listings = await Listing.find(query)
 			.populate("seller", "name email")
 			.sort({ createdAt: -1 });
 
 		return NextResponse.json(listings);
 	} catch (error) {
-		console.error("Admin listings fetch error:", error);
+		console.error("Admin all listings fetch error:", error);
 		return NextResponse.json(
-			{ message: "Failed to fetch listings" },
+			{ error: "Failed to fetch listings" },
 			{ status: 500 }
 		);
 	}
@@ -34,33 +36,31 @@ export async function GET(request) {
 
 export async function PUT(request) {
 	try {
-		const { listingId, status, adminId } = await request.json();
+		const { listingId, action, adminId } = await request.json();
 
 		await connectDB();
 
 		const admin = await User.findById(adminId);
-		console.log(admin);
 		if (!admin || admin.role !== "admin") {
 			return NextResponse.json(
-				{ message: "Unauthorized" },
+				{ error: "Unauthorized" },
 				{ status: 401 }
 			);
 		}
 
-		const listing = await Listing.findByIdAndUpdate(
-			listingId,
-			{
-				verificationStatus: status,
-				status: status === "verified" ? "active" : "rejected",
-			},
-			{ new: true }
-		);
+		if (action === "delete") {
+			await Listing.findByIdAndDelete(listingId);
+		} else if (action === "deactivate") {
+			await Listing.findByIdAndUpdate(listingId, { status: "inactive" });
+		} else if (action === "activate") {
+			await Listing.findByIdAndUpdate(listingId, { status: "active" });
+		}
 
-		return NextResponse.json({ success: true, listing });
+		return NextResponse.json({ success: true });
 	} catch (error) {
-		console.error("Admin listing update error:", error);
+		console.error("Admin listing action error:", error);
 		return NextResponse.json(
-			{ message: "Failed to update listing" },
+			{ error: "Failed to perform action" },
 			{ status: 500 }
 		);
 	}
