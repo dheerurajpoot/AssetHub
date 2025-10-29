@@ -12,28 +12,29 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus, Eye, DollarSign, TrendingUp } from "lucide-react";
 import axios from "axios";
+import { userContext } from "@/context/userContext";
+import { toast } from "sonner";
 
 export default function Dashboard() {
-	const [user, setUser] = useState<any>(null);
+	const { user } = userContext();
 	const [listings, setListings] = useState<any[]>([]);
 	const [bids, setBids] = useState<any[]>([]);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		const fetchDashboardData = async () => {
 			try {
-				const userId = localStorage.getItem("userId");
-				if (!userId) return;
+				if (!user) {
+					return;
+				}
 
-				const [userRes, listingsRes] = await Promise.all([
-					axios.get(`/api/users/${userId}`),
-					axios.get(`/api/listings?userId=${userId}`),
-				]);
+				const listingsRes = await axios.get(
+					`/api/listings?userId=${user?._id}`
+				);
 
-				const userData = await userRes.data;
 				const listingsData = await listingsRes.data;
+				console.log("list data: ", listingsData);
 
-				setUser(userData);
 				setListings(listingsData.listings || []);
 			} catch (error) {
 				console.error("Failed to fetch dashboard data:", error);
@@ -43,7 +44,7 @@ export default function Dashboard() {
 		};
 
 		fetchDashboardData();
-	}, []);
+	}, [user]);
 
 	if (loading) {
 		return (

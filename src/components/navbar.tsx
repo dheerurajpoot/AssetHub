@@ -1,31 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
+import { userContext } from "@/context/userContext";
 
 export default function Navbar() {
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState(false);
-	const [user, setUser] = useState<{ id: string; name: string } | null>(null);
-	const [loading, setLoading] = useState(true);
+	const { user, signOut } = userContext();
 
-	useEffect(() => {
-		const userId = localStorage.getItem("userId");
-		const userName = localStorage.getItem("userName");
-		if (userId) {
-			setUser((prev) => ({ ...prev, id: userId, name: userName || "" }));
-		}
-		setLoading(false);
-	}, []);
-
-	const handleLogout = () => {
-		localStorage.removeItem("userId");
-		localStorage.removeItem("userName");
-		localStorage.removeItem("userRole");
-		setUser(null);
+	const handleLogout = async () => {
+		await signOut();
 		router.push("/");
 	};
 
@@ -66,41 +54,39 @@ export default function Navbar() {
 
 					{/* Auth Buttons */}
 					<div className='hidden md:flex items-center gap-4'>
-						{!loading && (
-							<>
-								{user ? (
-									<div className='flex items-center gap-4'>
-										<Link href='/dashboard'>
-											<Button className='bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
-												Dashboard
-											</Button>
-										</Link>
-										<Button
-											onClick={handleLogout}
-											variant='outline'
-											size='icon'
-											className='border-slate-600 text-slate-300 hover:bg-slate-800 bg-transparent'>
-											<LogOut size={20} />
+						<>
+							{user ? (
+								<div className='flex items-center gap-4'>
+									<Link href='/dashboard'>
+										<Button className='bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
+											Dashboard
 										</Button>
-									</div>
-								) : (
-									<div className='flex items-center gap-2'>
-										<Link href='/login'>
-											<Button
-												variant='outline'
-												className='border-slate-600 text-slate-300 hover:bg-slate-800 bg-transparent'>
-												Login
-											</Button>
-										</Link>
-										<Link href='/signup'>
-											<Button className='bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
-												Sign Up
-											</Button>
-										</Link>
-									</div>
-								)}
-							</>
-						)}
+									</Link>
+									<Button
+										onClick={handleLogout}
+										variant='outline'
+										size='icon'
+										className='border-slate-600 text-slate-300 hover:bg-slate-800 bg-transparent'>
+										<LogOut size={20} />
+									</Button>
+								</div>
+							) : (
+								<div className='flex items-center gap-2'>
+									<Link href='/login'>
+										<Button
+											variant='outline'
+											className='border-slate-600 text-slate-300 hover:bg-slate-800 bg-transparent'>
+											Login
+										</Button>
+									</Link>
+									<Link href='/signup'>
+										<Button className='bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
+											Sign Up
+										</Button>
+									</Link>
+								</div>
+							)}
+						</>
 					</div>
 
 					{/* Mobile Menu Button */}

@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
+import { userContext } from "@/context/userContext";
+import { toast } from "sonner";
 
 const categories = [
 	"Website",
@@ -31,6 +33,7 @@ const categories = [
 
 export default function CreateListing() {
 	const router = useRouter();
+	const { user } = userContext();
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		title: "",
@@ -94,17 +97,21 @@ export default function CreateListing() {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setLoading(true);
+		if (!user) {
+			toast.error("User not found!");
+		}
 
 		try {
-			const userId = localStorage.getItem("userId");
 			const response = await axios.post("/api/listings", {
 				...formData,
 				price: Number.parseFloat(formData.price),
-				userId,
+				userId: user?._id,
 				images: [],
 			});
 
-			if (response.status === 201) {
+			if (response.data.success) {
+				setLoading(false);
+				toast.success(response.data.message || "Listing successfull!");
 				router.push("/dashboard");
 			}
 		} catch (error) {

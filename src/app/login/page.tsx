@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowRight, Mail, Lock } from "lucide-react";
 import axios from "axios";
+import { toast } from "sonner";
 
 export default function Login() {
 	const router = useRouter();
@@ -40,17 +41,17 @@ export default function Login() {
 			const data = response.data;
 
 			if (data.success) {
-				localStorage.setItem("userId", data.user.id);
-				localStorage.setItem("userName", data.user.name);
-				localStorage.setItem("userRole", data.user.role);
+				localStorage.setItem("user", JSON.stringify(data.user));
+				toast.success(data.message || "Login successful");
 				router.push(
 					data.user.role === "admin" ? "/admin" : "/dashboard"
 				);
 			} else {
 				setError(data.message || "Login failed");
 			}
-		} catch (err) {
-			setError("An error occurred. Please try again.");
+		} catch (err: any) {
+			const res = err.response.data;
+			setError(res.message || "An error occurred. Please try again.");
 		} finally {
 			setLoading(false);
 		}

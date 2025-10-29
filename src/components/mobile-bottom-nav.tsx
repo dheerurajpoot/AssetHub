@@ -1,20 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Search, Plus, User } from "lucide-react";
+import { userContext } from "@/context/userContext";
 
 export default function MobileBottomNav() {
 	const pathname = usePathname();
-	const [user, setUser] = useState<{ id: string } | null>(null);
-
-	useEffect(() => {
-		const userId = localStorage.getItem("userId");
-		if (userId) {
-			setUser((prev) => ({ ...prev, id: userId }));
-		}
-	}, []);
+	const { user } = userContext();
 
 	// Hide on admin pages and auth pages
 	if (

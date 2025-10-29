@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowRight, Mail, Lock, User } from "lucide-react";
 import axios from "axios";
+import { toast } from "sonner";
 
 export default function SignUp() {
 	const router = useRouter();
@@ -47,11 +48,11 @@ export default function SignUp() {
 			});
 
 			const data = response.data;
-			console.log(data);
 			if (data.success) {
-				localStorage.setItem("userId", data.user.id);
-				localStorage.setItem("userName", data.user.name);
-				router.push("/dashboard");
+				toast.success(data.message || "Signup successful");
+				setTimeout(() => {
+					router.push("/login");
+				}, 1000);
 			} else {
 				setError(data.message || "Signup failed");
 			}

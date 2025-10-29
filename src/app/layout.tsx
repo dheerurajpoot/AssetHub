@@ -1,19 +1,19 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import MobileBottomNav from "@/components/mobile-bottom-nav";
+import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/context/userContext";
 
 const geistSans = Geist({ subsets: ["latin"] });
-const geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: "AssetHub - Buy & Sell Digital Assets",
 	description:
-		"Marketplace for buying and selling digital assets like websites, YouTube channels, and more",
-	generator: "v0.app",
+		"The trusted marketplace for buying and selling digital assets.",
 };
 
 export default function RootLayout({
@@ -26,9 +26,12 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.className} bg-slate-900`}
 				suppressHydrationWarning>
-				<Navbar />
-				{children}
-				<MobileBottomNav />
+				<AuthProvider>
+					<Navbar />
+					{children}
+					<Toaster />
+					<MobileBottomNav />
+				</AuthProvider>
 				<Footer />
 			</body>
 		</html>
