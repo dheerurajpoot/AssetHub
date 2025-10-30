@@ -1,20 +1,32 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Listing from "@/models/Listing";
-import User from "@/models/User"; // Import User model
+import User from "@/models/User";
 
-export async function GET(request, { params }) {
+function extractIdFromRequest(request) {
+	const url = new URL(request.url, process.env.NEXT_PUBLIC_APP_URL);
+	const pathParts = url.pathname.split("/");
+	return pathParts[pathParts.length - 1];
+}
+
+export async function GET(request) {
 	try {
 		await connectDB();
-		console.log("param: ", params);
+		const id = extractIdFromRequest(request);
 
 		const listing = await Listing.findByIdAndUpdate(
-			params._id,
+			id,
 			{ $inc: { views: 1 } },
 			{ new: true }
 		)
 			.populate("seller", "name avatar rating bio")
-			.populate("reviews");
+			.populate({
+				path: "bids",
+				populate: {
+					path: "bidder",
+					select: "name email phone",
+				},
+			});
 
 		if (!listing) {
 			return NextResponse.json(

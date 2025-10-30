@@ -33,7 +33,6 @@ export default function Dashboard() {
 				);
 
 				const listingsData = await listingsRes.data;
-				console.log("list data: ", listingsData);
 
 				setListings(listingsData.listings || []);
 			} catch (error) {

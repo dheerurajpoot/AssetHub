@@ -88,7 +88,7 @@ export default function Marketplace() {
 				</div>
 
 				{/* Categories */}
-				<div className='mb-8 overflow-x-auto pb-2'>
+				<div className='market-category mb-8 overflow-x-auto pb-2'>
 					<div className='flex gap-2'>
 						{categories.map((cat) => (
 							<Button
@@ -104,8 +104,8 @@ export default function Marketplace() {
 								}
 								className={
 									selectedCategory === cat
-										? "bg-linear-to-r from-blue-500 to-cyan-500 text-white whitespace-nowrap"
-										: "border-slate-600 text-slate-300 hover:bg-slate-700 whitespace-nowrap"
+										? "bg-linear-to-r from-blue-500 to-cyan-500 text-white whitespace-nowrap cursor-pointer"
+										: "border-slate-600 text-slate-600 hover:bg-slate-700 whitespace-nowrap cursor-pointer"
 								}>
 								{cat}
 							</Button>
@@ -180,12 +180,17 @@ export default function Marketplace() {
 												{listing.price.toLocaleString()}
 											</span>
 											<div className='flex items-center gap-1'>
-												<span className='text-yellow-500'>
-													★
-												</span>
 												<span className='text-sm text-slate-400'>
-													{listing.seller?.rating ||
-														0}
+													{listing.status ===
+													"active" ? (
+														<p className='text-green-400 font-bold'>
+															Active
+														</p>
+													) : (
+														<h2 className='text-red-500 text-2xl font-bold'>
+															Sold
+														</h2>
+													)}
 												</span>
 											</div>
 										</div>

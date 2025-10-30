@@ -12,7 +12,7 @@ export async function GET(request) {
 		const page = Number.parseInt(searchParams.get("page")) || 1;
 		const limit = 12;
 
-		const query = { status: "active" };
+		const query = {};
 		if (category) query.category = category;
 
 		const userId = searchParams.get("userId");
@@ -25,6 +25,7 @@ export async function GET(request) {
 				.limit(limit);
 		} else {
 			listings = await Listing.find(query)
+				.select(-{ status: "pending" })
 				.populate("seller", "name avatar rating")
 				.sort({ createdAt: -1 })
 				.skip((page - 1) * limit)
@@ -84,9 +85,13 @@ export async function POST(request) {
 			seller: userId,
 		});
 
-		await User.findByIdAndUpdate(userId, {
-			$push: { listings: listing._id },
-		});
+		await User.findByIdAndUpdate(
+			userId,
+			{
+				$push: { listings: listing._id },
+			},
+			{ new: true }
+		);
 
 		return NextResponse.json({ success: true, listing }, { status: 201 });
 	} catch (error) {

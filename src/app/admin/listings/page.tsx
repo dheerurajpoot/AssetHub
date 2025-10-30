@@ -3,10 +3,19 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trash2, Eye, EyeOff, DollarSign, User } from "lucide-react";
+import {
+	Trash2,
+	Eye,
+	EyeOff,
+	DollarSign,
+	User,
+	CheckCircle,
+	XCircle,
+} from "lucide-react";
 import AdminSidebar from "@/components/admin-sidebar";
 import { toast } from "sonner";
 import { userContext } from "@/context/userContext";
+import axios from "axios";
 
 export default function AdminListingsPage() {
 	const { user } = userContext();
@@ -105,6 +114,44 @@ export default function AdminListingsPage() {
 			}
 		} catch (error) {
 			console.error("Failed to activate listing:", error);
+		}
+	};
+
+	const handleApprove = async (listingId: string) => {
+		try {
+			if (!user) {
+				return;
+			}
+			const response = await axios.put("/api/admin/listings", {
+				listingId,
+				status: "verified",
+				adminId: user?._id,
+			});
+
+			if (response.status === 200) {
+				setListings(listings.filter((l: any) => l._id !== listingId));
+			}
+		} catch (error) {
+			console.error("Failed to approve listing:", error);
+		}
+	};
+
+	const handleReject = async (listingId: string) => {
+		try {
+			if (!user) {
+				return;
+			}
+			const response = await axios.put("/api/admin/listings", {
+				listingId,
+				status: "rejected",
+				adminId: user?._id,
+			});
+
+			if (response.status === 200) {
+				setListings(listings.filter((l: any) => l._id !== listingId));
+			}
+		} catch (error) {
+			console.error("Failed to reject listing:", error);
 		}
 	};
 
@@ -243,6 +290,33 @@ export default function AdminListingsPage() {
 
 										{/* Action Buttons */}
 										<div className='flex gap-2 w-full md:w-auto flex-wrap md:flex-nowrap'>
+											{listing.status === "pending" && (
+												<div className='flex gap-2 flex-col'>
+													<Button
+														onClick={() =>
+															handleApprove(
+																listing._id
+															)
+														}
+														className='flex-1 md:flex-none bg-green-600 hover:bg-green-700 text-white gap-2'>
+														<CheckCircle
+															size={18}
+														/>
+														Approve
+													</Button>
+													<Button
+														onClick={() =>
+															handleReject(
+																listing._id
+															)
+														}
+														className='flex-1 md:flex-none bg-red-600 hover:bg-red-700 text-white gap-2'>
+														<XCircle size={18} />
+														Reject
+													</Button>
+												</div>
+											)}
+
 											{listing.status === "active" && (
 												<div className='flex flex-col gap-2'>
 													<Button

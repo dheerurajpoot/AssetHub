@@ -120,3 +120,6 @@
     @apply bg-background text-foreground;
   }
 }
+.market-category::-webkit-scrollbar{
+  display: none;
+}

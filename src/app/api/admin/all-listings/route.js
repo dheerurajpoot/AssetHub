@@ -54,6 +54,8 @@ export async function PUT(request) {
 			await Listing.findByIdAndUpdate(listingId, { status: "inactive" });
 		} else if (action === "activate") {
 			await Listing.findByIdAndUpdate(listingId, { status: "active" });
+		} else if (action === "sold") {
+			await Listing.findByIdAndUpdate(listingId, { status: "sold" });
 		}
 
 		return NextResponse.json({ success: true });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,11 +13,18 @@ import {
 	TrendingUp,
 	Calendar,
 	MessageCircle,
+	TrendingDown,
 } from "lucide-react";
 import axios from "axios";
+import { userContext } from "@/context/userContext";
 
-export default function ListingDetail() {
-	const params = useParams();
+export default function ListingDetail({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}) {
+	const { id } = use(params);
+	const { user } = userContext();
 	const router = useRouter();
 	const [listing, setListing] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
@@ -30,7 +37,7 @@ export default function ListingDetail() {
 	useEffect(() => {
 		const fetchListing = async () => {
 			try {
-				const response = await axios.get(`/api/listings/${params.id}`);
+				const response = await axios.get(`/api/listings/${id}`);
 				const data = await response.data;
 				setListing(data);
 				setBidAmount(data?.price.toString());
@@ -42,13 +49,12 @@ export default function ListingDetail() {
 		};
 
 		fetchListing();
-	}, [params.id]);
+	}, [id]);
 
 	const handlePlaceBid = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const userId = localStorage.getItem("userId");
 
-		if (!userId) {
+		if (!user) {
 			router.push("/login");
 			return;
 		}
@@ -61,8 +67,8 @@ export default function ListingDetail() {
 		setSubmittingBid(true);
 		try {
 			const response = await axios.post("/api/bids", {
-				listingId: params.id,
-				bidderId: userId,
+				listingId: id,
+				bidderId: user?._id,
 				amount: Number.parseFloat(bidAmount),
 				message: bidMessage,
 			});
@@ -89,16 +95,16 @@ export default function ListingDetail() {
 		}
 		const message = `Hi, I'm interested in your listing: ${listing?.title}`;
 		window.open(
-			`https://wa.me/${
-				listing.seller?.whatsapp
-			}?text=${encodeURIComponent(message)}`,
+			`https://wa.me/${listing.seller?.phone}?text=${encodeURIComponent(
+				message
+			)}`,
 			"_blank"
 		);
 	};
 
 	if (loading) {
 		return (
-			<div className='flex items-center justify-center min-h-screen'>
+			<div className='flex items-center text-white justify-center min-h-screen'>
 				Loading...
 			</div>
 		);
@@ -106,7 +112,7 @@ export default function ListingDetail() {
 
 	if (!listing) {
 		return (
-			<div className='flex items-center justify-center min-h-screen'>
+			<div className='flex items-center text-white justify-center min-h-screen'>
 				Listing not found
 			</div>
 		);
@@ -256,42 +262,120 @@ export default function ListingDetail() {
 								<p className='text-4xl font-bold text-white mb-6'>
 									${listing.price.toLocaleString()}
 								</p>
-
-								<div className='space-y-3'>
-									<Button
-										onClick={handleContactSeller}
-										className='w-full bg-green-600 hover:bg-green-700 text-white gap-2'>
-										<MessageCircle size={18} />
-										Contact on WhatsApp
-									</Button>
-
-									<div className='flex gap-2'>
+								{listing.status === "sold" ? (
+									<h2 className='text-red-400 text-3xl font-bold'>
+										Out Of Stock
+									</h2>
+								) : (
+									<div className='space-y-3'>
 										<Button
-											variant='outline'
-											size='icon'
-											onClick={() =>
-												setIsFavorite(!isFavorite)
-											}
-											className='flex-1 border-slate-600 text-slate-300 hover:bg-slate-700'>
-											<Heart
-												size={20}
-												fill={
-													isFavorite
-														? "currentColor"
-														: "none"
+											onClick={handleContactSeller}
+											className='w-full bg-green-600 hover:bg-green-700 text-white gap-2 cursor-pointer'>
+											<MessageCircle size={18} />
+											Contact on WhatsApp
+										</Button>
+
+										<div className='flex gap-2'>
+											<Button
+												variant='outline'
+												size='icon'
+												onClick={() =>
+													setIsFavorite(!isFavorite)
 												}
-											/>
-										</Button>
-										<Button
-											variant='outline'
-											size='icon'
-											className='flex-1 border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent'>
-											<Share2 size={20} />
-										</Button>
+												className='flex-1 border-slate-600 text-slate-300 hover:bg-slate-700'>
+												<Heart
+													size={20}
+													fill={
+														isFavorite
+															? "currentColor"
+															: "none"
+													}
+												/>
+											</Button>
+											<Button
+												variant='outline'
+												size='icon'
+												className='flex-1 border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent'>
+												<Share2 size={20} />
+											</Button>
+										</div>
 									</div>
-								</div>
+								)}
 							</CardContent>
 						</Card>
+
+						{/* recent bids  */}
+						{listing.bids.length > 0 && (
+							<Card className='bg-slate-800 border-slate-700'>
+								<CardHeader>
+									<CardTitle className='text-white text-lg flex items-center gap-2'>
+										<TrendingDown
+											size={20}
+											className='text-cyan-500'
+										/>
+										Recent Bids
+									</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<div className='space-y-3 max-h-96 overflow-y-auto'>
+										{listing.bids.map((bid: any) => (
+											<div
+												key={bid._id}
+												className='p-3 bg-slate-700 rounded-lg border border-slate-600 hover:border-cyan-500 transition-colors'>
+												<div className='flex items-start justify-between mb-2'>
+													<div className='flex-1'>
+														<p className='font-semibold text-white text-sm'>
+															{bid.bidder?.name ||
+																"Anonymous"}
+														</p>
+														<p className='font-semibold text-white text-sm'>
+															Phone:
+															{bid.bidder
+																?.phone ||
+																"Unknown"}
+														</p>
+														<p className='text-xs text-slate-400'>
+															{new Date(
+																bid.createdAt
+															).toLocaleDateString()}{" "}
+															{new Date(
+																bid.createdAt
+															).toLocaleTimeString(
+																[],
+																{
+																	hour: "2-digit",
+																	minute: "2-digit",
+																}
+															)}
+														</p>
+													</div>
+													<div className='text-right'>
+														<p className='font-bold text-cyan-400'>
+															$
+															{bid.amount.toLocaleString()}
+														</p>
+														<p className='text-xs text-slate-400'>
+															{bid.amount >
+															listing.price
+																? `+$${(
+																		bid.amount -
+																		listing.price
+																  ).toLocaleString()}`
+																: "Asking"}
+														</p>
+													</div>
+												</div>
+												{bid.message && (
+													<p className='text-xs text-slate-300 italic border-t border-slate-600 pt-2 mt-2'>
+														"{bid.message}"
+													</p>
+												)}
+											</div>
+										))}
+									</div>
+								</CardContent>
+							</Card>
+						)}
 
 						{/* Bidding Card */}
 						{listing.allowBidding && (
@@ -351,11 +435,19 @@ export default function ListingDetail() {
 
 										<Button
 											type='submit'
-											disabled={submittingBid}
+											disabled={
+												listing.status === "sold" ||
+												submittingBid
+											}
 											className='w-full bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
 											{submittingBid
 												? "Placing Bid..."
-												: "Place Bid"}
+												: `${
+														listing.status ===
+														"sold"
+															? "Bidding Closed"
+															: "Place Bid"
+												  }`}
 										</Button>
 									</form>
 								</CardContent>
