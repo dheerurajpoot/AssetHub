@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { userContext } from "@/context/userContext";
+import Link from "next/link";
 
 export default function ListingDetail({
 	params,
@@ -33,6 +34,7 @@ export default function ListingDetail({
 	const [bidMessage, setBidMessage] = useState("");
 	const [bids, setBids] = useState<any[]>([]);
 	const [submittingBid, setSubmittingBid] = useState(false);
+	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchListing = async () => {
@@ -134,18 +136,38 @@ export default function ListingDetail({
 				<div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
 					{/* Main Content */}
 					<div className='lg:col-span-2'>
-						{/* Image */}
+						{/* Hero Image / Thumbnail */}
 						<Card className='bg-slate-800 border-slate-700 mb-6 overflow-hidden'>
-							<div className='w-full h-96 bg-linear-to-br from-slate-700 to-slate-900 flex items-center justify-center'>
-								<div className='text-center'>
-									<TrendingUp
-										size={48}
-										className='text-blue-500 mx-auto mb-2'
+							<div className='relative w-full h-112 bg-linear-to-br from-slate-700 to-slate-900 flex items-center justify-center'>
+								{listing?.thumbnail ? (
+									<img
+										src={listing.thumbnail}
+										onClick={(e) => {
+											e.preventDefault();
+											setPreviewUrl(listing.thumbnail);
+										}}
+										alt={
+											listing?.title ||
+											"Listing thumbnail"
+										}
+										className='w-full h-full object-cover'
 									/>
-									<p className='text-slate-400'>
-										Asset Preview
-									</p>
-								</div>
+								) : (
+									<div className='text-center'>
+										<TrendingUp
+											size={48}
+											className='text-blue-500 mx-auto mb-2'
+										/>
+										<p className='text-slate-400'>
+											Asset Preview
+										</p>
+									</div>
+								)}
+								{listing?.category && (
+									<span className='absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-slate-900/70 text-slate-100 border border-slate-700 backdrop-blur'>
+										{listing.category}
+									</span>
+								)}
 							</div>
 						</Card>
 
@@ -164,42 +186,42 @@ export default function ListingDetail({
 								{/* Metrics Grid */}
 								<div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
 									{listing.metrics?.monthlyRevenue && (
-										<div className='p-4 bg-slate-700 rounded-lg'>
+										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
 											<p className='text-xs text-slate-400 mb-1'>
 												Monthly Revenue
 											</p>
-											<p className='text-lg font-bold text-white'>
+											<p className='text-xl font-bold text-white'>
 												$
 												{listing.metrics.monthlyRevenue.toLocaleString()}
 											</p>
 										</div>
 									)}
 									{listing.metrics?.monthlyTraffic && (
-										<div className='p-4 bg-slate-700 rounded-lg'>
+										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
 											<p className='text-xs text-slate-400 mb-1'>
 												Monthly Traffic
 											</p>
-											<p className='text-lg font-bold text-white'>
+											<p className='text-xl font-bold text-white'>
 												{listing.metrics.monthlyTraffic.toLocaleString()}
 											</p>
 										</div>
 									)}
 									{listing.metrics?.followers && (
-										<div className='p-4 bg-slate-700 rounded-lg'>
+										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
 											<p className='text-xs text-slate-400 mb-1'>
 												Followers
 											</p>
-											<p className='text-lg font-bold text-white'>
+											<p className='text-xl font-bold text-white'>
 												{listing.metrics.followers.toLocaleString()}
 											</p>
 										</div>
 									)}
 									{listing.metrics?.age && (
-										<div className='p-4 bg-slate-700 rounded-lg'>
+										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
 											<p className='text-xs text-slate-400 mb-1'>
 												Age
 											</p>
-											<p className='text-lg font-bold text-white'>
+											<p className='text-xl font-bold text-white'>
 												{listing.metrics.age} months
 											</p>
 										</div>
@@ -209,47 +231,112 @@ export default function ListingDetail({
 								{/* Details */}
 								{listing.details && (
 									<div className='space-y-3 pt-4 border-t border-slate-700'>
-										{listing.details.niche && (
-											<div>
-												<p className='text-xs text-slate-400'>
-													Niche
-												</p>
-												<p className='text-white'>
-													{listing.details.niche}
-												</p>
-											</div>
-										)}
-										{listing.details.monetization && (
-											<div>
-												<p className='text-xs text-slate-400'>
-													Monetization
-												</p>
-												<p className='text-white'>
-													{
-														listing.details
-															.monetization
-													}
-												</p>
-											</div>
-										)}
-										{listing.details.trafficSource && (
-											<div>
-												<p className='text-xs text-slate-400'>
-													Traffic Source
-												</p>
-												<p className='text-white'>
-													{
-														listing.details
-															.trafficSource
-													}
-												</p>
-											</div>
-										)}
+										<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+											{listing.details.niche && (
+												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+													<p className='text-xs text-slate-400'>
+														Niche
+													</p>
+													<p className='text-white font-semibold'>
+														{listing.details.niche}
+													</p>
+												</div>
+											)}
+											{listing.details.monetization && (
+												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+													<p className='text-xs text-slate-400'>
+														Monetization
+													</p>
+													<p className='text-white font-semibold'>
+														{
+															listing.details
+																.monetization
+														}
+													</p>
+												</div>
+											)}
+											{listing.details.trafficSource && (
+												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+													<p className='text-xs text-slate-400'>
+														Traffic Source
+													</p>
+													<p className='text-white font-semibold'>
+														{
+															listing.details
+																.trafficSource
+														}
+													</p>
+												</div>
+											)}
+										</div>
 									</div>
 								)}
 							</CardContent>
 						</Card>
+
+						{/* Image Gallery - Masonry */}
+						{listing?.images && listing.images.length > 0 && (
+							<Card className='bg-slate-800 border-slate-700 mt-6'>
+								<CardHeader>
+									<CardTitle className='text-white'>
+										Gallery
+									</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<div className='columns-1 sm:columns-2 lg:columns-3 gap-4 [column-fill:balance]'>
+										{(listing.images as string[])
+											.filter(
+												(img) =>
+													img &&
+													img !== listing.thumbnail
+											)
+											.map((img, idx) => (
+												<div
+													key={idx}
+													className='mb-4 break-inside-avoid'>
+													<div className='overflow-hidden rounded-lg border border-slate-700 bg-slate-900/40'>
+														<img
+															src={img}
+															onClick={(e) => {
+																e.preventDefault();
+																setPreviewUrl(
+																	img
+																);
+															}}
+															alt={`Image ${
+																idx + 1
+															}`}
+															className='w-full h-auto object-cover hover:scale-[1.02] transition-transform duration-300'
+														/>
+													</div>
+												</div>
+											))}
+									</div>
+								</CardContent>
+							</Card>
+						)}
 					</div>
+
+					{/* Image Preview Lightbox */}
+					{previewUrl && (
+						<div
+							className='fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4'
+							onClick={() => setPreviewUrl(null)}>
+							<button
+								onClick={(e) => {
+									e.stopPropagation();
+									setPreviewUrl(null);
+								}}
+								className='absolute top-4 right-4 text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1 text-sm'>
+								Close
+							</button>
+							<img
+								src={previewUrl as string}
+								alt='Preview'
+								className='max-w-[95vw] max-h-[85vh] object-contain shadow-2xl rounded-lg'
+							/>
+						</div>
+					)}
 
 					{/* Sidebar */}
 					<div className='space-y-6'>
@@ -439,7 +526,7 @@ export default function ListingDetail({
 												listing.status === "sold" ||
 												submittingBid
 											}
-											className='w-full bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
+											className='w-full bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white cursor-pointer'>
 											{submittingBid
 												? "Placing Bid..."
 												: `${
@@ -500,12 +587,13 @@ export default function ListingDetail({
 										</p>
 									</div>
 								</div>
-
-								<Button
-									variant='outline'
-									className='w-full border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent'>
-									View Profile
-								</Button>
+								<Link href={`/profile/${listing.seller?._id}`}>
+									<Button
+										variant='outline'
+										className='w-full border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent cursor-pointer'>
+										View Profile
+									</Button>
+								</Link>
 							</CardContent>
 						</Card>
 

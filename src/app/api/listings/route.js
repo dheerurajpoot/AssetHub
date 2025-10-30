@@ -19,20 +19,24 @@ export async function GET(request) {
 
 		let listings;
 		if (userId) {
-			listings = await Listing.find()
+			listings = await Listing.find({ seller: userId })
 				.sort({ createdAt: -1 })
 				.skip((page - 1) * limit)
 				.limit(limit);
 		} else {
-			listings = await Listing.find(query)
-				.select(-{ status: "pending" })
+			const publicQuery = { ...query, status: { $ne: "pending" } };
+			listings = await Listing.find(publicQuery)
 				.populate("seller", "name avatar rating")
 				.sort({ createdAt: -1 })
 				.skip((page - 1) * limit)
 				.limit(limit);
 		}
 
-		const total = await Listing.countDocuments(query);
+		const total = await Listing.countDocuments(
+			userId
+				? { seller: userId }
+				: { ...query, status: { $ne: "pending" } }
+		);
 
 		return NextResponse.json({
 			listings,
@@ -61,6 +65,7 @@ export async function POST(request) {
 			metrics,
 			details,
 			images,
+			thumbnail,
 			userId,
 		} = await request.json();
 
@@ -81,7 +86,7 @@ export async function POST(request) {
 			metrics,
 			details,
 			images,
-			thumbnail: images?.[0],
+			thumbnail: thumbnail || images?.[0],
 			seller: userId,
 		});
 

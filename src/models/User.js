@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
 		},
 		avatar: String,
 		bio: String,
-		whatsapp: String,
+		phone: String,
 		role: {
 			type: String,
 			enum: ["user", "admin"],
@@ -27,18 +27,12 @@ const userSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
-		totalListings: {
-			type: Number,
-			default: 0,
-		},
+
 		totalSales: {
 			type: Number,
 			default: 0,
 		},
-		totalEarnings: {
-			type: Number,
-			default: 0,
-		},
+
 		rating: {
 			type: Number,
 			default: 0,
@@ -55,12 +49,6 @@ const userSchema = new mongoose.Schema(
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Listing",
-			},
-		],
-		purchases: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "Transaction",
 			},
 		],
 	},

@@ -148,7 +148,7 @@ export default function Home() {
 				</div>
 			</section>
 
-			{/* Featured Listings */}
+			{/* Featured Listings (List View) */}
 			<section className='max-w-7xl mx-auto px-4 md:px-8 py-16'>
 				<div className='flex justify-between items-center mb-8'>
 					<h2 className='text-3xl font-bold text-white'>
@@ -164,78 +164,162 @@ export default function Home() {
 				</div>
 
 				{loading ? (
-					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-						{[1, 2, 3].map((i, index) => (
+					<div className='space-y-4'>
+						{[1, 2, 3, 4, 5, 6].map((i) => (
 							<Card
-								key={index}
-								className='bg-slate-800 border-slate-700 animate-pulse'>
-								<div className='h-48 bg-slate-700' />
-								<CardContent className='p-6 space-y-3'>
-									<div className='h-4 bg-slate-700 rounded w-3/4' />
-									<div className='h-4 bg-slate-700 rounded w-1/2' />
+								key={i}
+								className='bg-slate-800 border-slate-700'>
+								<CardContent className='p-4'>
+									<div className='flex gap-4 items-center'>
+										<div className='w-40 h-28 bg-slate-700 rounded animate-pulse' />
+										<div className='flex-1 space-y-3'>
+											<div className='h-4 w-1/2 bg-slate-700 rounded animate-pulse' />
+											<div className='h-3 w-1/3 bg-slate-700 rounded animate-pulse' />
+											<div className='h-3 w-2/3 bg-slate-700 rounded animate-pulse' />
+										</div>
+										<div className='w-28 h-6 bg-slate-700 rounded animate-pulse' />
+									</div>
 								</CardContent>
 							</Card>
 						))}
 					</div>
 				) : (
-					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+					<div className='space-y-4'>
 						{listings.slice(0, 6).map((listing: any) => (
 							<Link
 								key={listing._id}
 								href={`/listing/${listing._id}`}>
-								<Card className='bg-slate-800 border-slate-700 hover:border-blue-500 cursor-pointer transition-all h-full hover:shadow-lg hover:shadow-blue-500/20'>
-									<div className='h-48 bg-linear-to-br from-slate-700 to-slate-900 flex items-center justify-center'>
-										<TrendingUp
-											size={48}
-											className='text-blue-500'
-										/>
-									</div>
-									<CardContent className='p-6'>
-										<h3 className='font-bold text-white mb-2 line-clamp-2'>
-											{listing.title}
-										</h3>
-										<p className='text-sm text-slate-400 mb-4'>
-											{listing.category}
-										</p>
+								<Card className='bg-slate-800 border-slate-700 hover:border-blue-500 transition-colors cursor-pointer'>
+									<CardContent className='p-4'>
+										<div className='flex flex-col sm:flex-row gap-4'>
+											{/* Thumbnail */}
+											<div className='w-full sm:w-40 h-56 sm:h-28 overflow-hidden rounded-lg border border-slate-700 bg-slate-900/40'>
+												{listing.thumbnail ||
+												(listing.images &&
+													listing.images[0]) ? (
+													<img
+														src={
+															listing.thumbnail ||
+															listing.images[0]
+														}
+														alt={listing.title}
+														className='w-full h-full object-cover hover:scale-[1.02] transition-transform duration-300'
+													/>
+												) : (
+													<div className='w-full h-full bg-linear-to-br from-slate-700 to-slate-900 flex items-center justify-center'>
+														<TrendingUp
+															size={32}
+															className='text-blue-500'
+														/>
+													</div>
+												)}
+											</div>
 
-										<div className='grid grid-cols-2 gap-2 mb-4'>
-											{listing.metrics
-												?.monthlyRevenue && (
-												<div className='text-xs'>
-													<p className='text-slate-500'>
-														Revenue
-													</p>
-													<p className='font-bold text-white'>
-														$
-														{listing.metrics.monthlyRevenue.toLocaleString()}
-													</p>
+											{/* Main */}
+											<div className='flex-1 min-w-0'>
+												<div className='flex items-start justify-between gap-3'>
+													<div className='min-w-0'>
+														<h3 className='text-white font-semibold text-lg truncate'>
+															{listing.title}
+														</h3>
+														<p className='text-slate-400 text-sm mt-0.5'>
+															{listing.category}
+														</p>
+													</div>
+													{/* Price and Status */}
+													<div className='text-right shrink-0'>
+														<p className='text-2xl font-bold text-white'>
+															$
+															{Number(
+																listing.price
+															).toLocaleString()}
+														</p>
+														<span
+															className={`${
+																listing.status ===
+																"sold"
+																	? "text-red-400 bg-red-400/10 border-red-400/30"
+																	: "text-green-400 bg-green-400/10 border-green-400/30"
+															} text-xs font-medium px-2 py-0.5 rounded-full inline-block mt-1 border`}>
+															{listing.status ===
+															"sold"
+																? "Sold"
+																: "Active"}
+														</span>
+													</div>
 												</div>
-											)}
-											{listing.metrics?.followers && (
-												<div className='text-xs'>
-													<p className='text-slate-500'>
-														Followers
-													</p>
-													<p className='font-bold text-white'>
-														{listing.metrics.followers.toLocaleString()}
-													</p>
-												</div>
-											)}
-										</div>
 
-										<div className='flex justify-between items-center pt-4 border-t border-slate-700'>
-											<span className='text-2xl font-bold text-white'>
-												$
-												{listing.price.toLocaleString()}
-											</span>
-											<div className='flex items-center gap-1'>
-												<span className='text-yellow-500'>
-													★
-												</span>
-												<span className='text-sm text-slate-400'>
-													{listing.seller?.rating ||
-														0}
-												</span>
+												{/* Metrics */}
+												<div className='grid grid-cols-2 md:grid-cols-4 gap-3 mt-4'>
+													{listing.metrics
+														?.monthlyRevenue && (
+														<div className='p-3 bg-slate-700/60 rounded border border-slate-600'>
+															<p className='text-xs text-slate-400'>
+																Monthly Revenue
+															</p>
+															<p className='text-white font-semibold'>
+																$
+																{Number(
+																	listing
+																		.metrics
+																		.monthlyRevenue
+																).toLocaleString()}
+															</p>
+														</div>
+													)}
+													{listing.metrics
+														?.monthlyTraffic && (
+														<div className='p-3 bg-slate-700/60 rounded border border-slate-600'>
+															<p className='text-xs text-slate-400'>
+																Monthly Traffic
+															</p>
+															<p className='text-white font-semibold'>
+																{Number(
+																	listing
+																		.metrics
+																		.monthlyTraffic
+																).toLocaleString()}
+															</p>
+														</div>
+													)}
+													{listing.metrics
+														?.followers && (
+														<div className='p-3 bg-slate-700/60 rounded border border-slate-600'>
+															<p className='text-xs text-slate-400'>
+																Followers
+															</p>
+															<p className='text-white font-semibold'>
+																{Number(
+																	listing
+																		.metrics
+																		.followers
+																).toLocaleString()}
+															</p>
+														</div>
+													)}
+													{listing.metrics?.age && (
+														<div className='p-3 bg-slate-700/60 rounded border border-slate-600'>
+															<p className='text-xs text-slate-400'>
+																Age
+															</p>
+															<p className='text-white font-semibold'>
+																{Number(
+																	listing
+																		.metrics
+																		.age
+																)}{" "}
+																months
+															</p>
+														</div>
+													)}
+												</div>
+
+												{/* Description (optional) */}
+												{listing.description && (
+													<p className='text-slate-300 text-sm mt-4 line-clamp-2'>
+														{listing.description}
+													</p>
+												)}
 											</div>
 										</div>
 									</CardContent>

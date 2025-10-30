@@ -118,7 +118,7 @@ export default function AdminUsersPage() {
 														{user.email}
 													</td>
 													<td className='px-6 py-4 text-sm text-white'>
-														{user.totalListings}
+														{user.listings.length}
 													</td>
 													<td className='px-6 py-4 text-sm text-white flex items-center gap-1'>
 														<TrendingUp

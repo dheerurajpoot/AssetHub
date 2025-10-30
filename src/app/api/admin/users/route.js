@@ -6,7 +6,6 @@ export async function GET(request) {
 	try {
 		const { searchParams } = new URL(request.url);
 		const adminId = searchParams.get("adminId");
-		console.log(adminId);
 
 		await connectDB();
 
@@ -19,9 +18,7 @@ export async function GET(request) {
 		}
 
 		const users = await User.find()
-			.select(
-				"name email verified totalListings totalSales rating createdAt"
-			)
+			.select("-password")
 			.sort({ createdAt: -1 });
 
 		return NextResponse.json(users);

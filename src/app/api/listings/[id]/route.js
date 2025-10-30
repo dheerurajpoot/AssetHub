@@ -45,9 +45,11 @@ export async function GET(request) {
 	}
 }
 
-export async function PUT(request, { params }) {
+export async function PUT(request) {
 	try {
 		const { userId, ...updateData } = await request.json();
+
+		const id = extractIdFromRequest(request);
 
 		if (!userId) {
 			return NextResponse.json(
@@ -58,7 +60,7 @@ export async function PUT(request, { params }) {
 
 		await connectDB();
 
-		const listing = await Listing.findById(params.id);
+		const listing = await Listing.findById(id);
 		if (!listing || listing.seller.toString() !== userId) {
 			return NextResponse.json(
 				{ message: "Unauthorized" },
@@ -66,7 +68,7 @@ export async function PUT(request, { params }) {
 			);
 		}
 
-		const updated = await Listing.findByIdAndUpdate(params.id, updateData, {
+		const updated = await Listing.findByIdAndUpdate(id, updateData, {
 			new: true,
 		});
 

@@ -19,6 +19,7 @@ export interface User {
 	token?: string;
 	totalListings: number;
 	totalSales: number;
+	listings: [];
 	totalEarnings: number;
 	isActive: string;
 	isEmailVerified: boolean;

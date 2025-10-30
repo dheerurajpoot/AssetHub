@@ -11,11 +11,15 @@ import {
 	User,
 	CheckCircle,
 	XCircle,
+	Edit2,
+	ChevronDown,
+	EyeIcon,
 } from "lucide-react";
 import AdminSidebar from "@/components/admin-sidebar";
 import { toast } from "sonner";
 import { userContext } from "@/context/userContext";
 import axios from "axios";
+import Link from "next/link";
 
 export default function AdminListingsPage() {
 	const { user } = userContext();
@@ -23,6 +27,8 @@ export default function AdminListingsPage() {
 	const [loading, setLoading] = useState(true);
 	const [filter, setFilter] = useState("all");
 	const [searchTerm, setSearchTerm] = useState("");
+	const [deleting, setDeleting] = useState<any>(null);
+	const [updating, setUpdating] = useState<any>(null);
 
 	useEffect(() => {
 		const fetchListings = async () => {
@@ -46,112 +52,67 @@ export default function AdminListingsPage() {
 		fetchListings();
 	}, [filter, user]);
 
-	const handleDelete = async (listingId: string) => {
-		if (!confirm("Are you sure you want to delete this listing?")) return;
+	const handleDeleteListing = async (listingId: string) => {
+		if (!window.confirm("Are you sure you want to delete this listing?"))
+			return;
 
+		setDeleting(listingId);
 		try {
-			if (!user) {
-				return;
-			}
-			const response = await fetch("/api/admin/all-listings", {
-				method: "PUT",
+			const userId = localStorage.getItem("userId");
+			const response = await fetch(`/api/listings/${listingId}`, {
+				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					listingId,
-					action: "delete",
-					adminId: user?._id,
-				}),
+				body: JSON.stringify({ userId }),
 			});
 
 			if (response.ok) {
-				toast.success("Status Deleted Successfully!");
-			}
-		} catch (error) {
-			console.error("Failed to delete listing:", error);
-		}
-	};
-
-	const handleDeactivate = async (listingId: string) => {
-		try {
-			if (!user) {
-				return;
-			}
-			const response = await fetch("/api/admin/all-listings", {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					listingId,
-					action: "deactivate",
-					adminId: user?._id,
-				}),
-			});
-
-			if (response.ok) {
-				toast.success("Status Updated Successfully!");
-			}
-		} catch (error) {
-			console.error("Failed to deactivate listing:", error);
-		}
-	};
-
-	const handleSold = async (listingId: string) => {
-		try {
-			if (!user) {
-				return;
-			}
-			const response = await fetch("/api/admin/all-listings", {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					listingId,
-					action: "sold",
-					adminId: user?._id,
-				}),
-			});
-
-			if (response.ok) {
-				toast.success("Status Updated Successfully!");
-			}
-		} catch (error) {
-			console.error("Failed to activate listing:", error);
-		}
-	};
-
-	const handleApprove = async (listingId: string) => {
-		try {
-			if (!user) {
-				return;
-			}
-			const response = await axios.put("/api/admin/listings", {
-				listingId,
-				status: "verified",
-				adminId: user?._id,
-			});
-
-			if (response.status === 200) {
 				setListings(listings.filter((l: any) => l._id !== listingId));
+			} else {
+				alert("Failed to delete listing");
 			}
 		} catch (error) {
-			console.error("Failed to approve listing:", error);
+			console.error("Delete error:", error);
+			alert("Error deleting listing");
+		} finally {
+			setDeleting(null);
 		}
 	};
 
-	const handleReject = async (listingId: string) => {
+	const handleUpdateStatus = async (listingId: string, newStatus: string) => {
+		setUpdating(listingId);
 		try {
-			if (!user) {
-				return;
-			}
-			const response = await axios.put("/api/admin/listings", {
-				listingId,
-				status: "rejected",
-				adminId: user?._id,
+			const response = await fetch(`/api/listings/${listingId}`, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ userId: user?._id, status: newStatus }),
 			});
 
-			if (response.status === 200) {
-				setListings(listings.filter((l: any) => l._id !== listingId));
+			if (response.ok) {
+				const updated = await response.json();
+				toast.success("Status updated");
+			} else {
+				alert("Failed to update status");
 			}
 		} catch (error) {
-			console.error("Failed to reject listing:", error);
+			console.error("Update error:", error);
+			alert("Error updating status");
+		} finally {
+			setUpdating(null);
+		}
+	};
+
+	const getStatusColor = (status: string) => {
+		switch (status) {
+			case "active":
+				return "bg-green-500/20 text-green-400 border-green-500/30";
+			case "sold":
+				return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+			case "pending":
+				return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+			case "rejected":
+				return "bg-red-500/20 text-red-400 border-red-500/30";
+			default:
+				return "bg-slate-500/20 text-slate-400 border-slate-500/30";
 		}
 	};
 
@@ -226,57 +187,37 @@ export default function AdminListingsPage() {
 								key={listing._id}
 								className='bg-slate-800 border-slate-700 hover:border-slate-600 transition-colors'>
 								<CardContent className='p-6'>
-									<div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
-										<div className='flex-1'>
-											<h3 className='text-xl font-bold text-white mb-2'>
-												{listing.title}
-											</h3>
-											<p className='text-slate-400 mb-3 line-clamp-2'>
-												{listing.description}
-											</p>
+									<div
+										key={listing._id}
+										className='p-4 bg-slate-700 rounded-lg hover:bg-slate-600 transition-colors border border-slate-600'>
+										<div className='flex flex-col md:flex-row md:items-start gap-4'>
+											{/* Thumbnail */}
+											{listing.thumbnail && (
+												<img
+													src={
+														listing.thumbnail ||
+														"/placeholder.svg"
+													}
+													alt={listing.title}
+													className='w-full md:w-24 h-24 object-cover rounded-lg'
+												/>
+											)}
 
-											<div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-												<div>
-													<p className='text-xs text-slate-500'>
-														Category
-													</p>
-													<p className='text-sm font-semibold text-white'>
-														{listing.category}
-													</p>
-												</div>
-												<div>
-													<p className='text-xs text-slate-500 flex items-center gap-1'>
-														<DollarSign size={12} />
-														Price
-													</p>
-													<p className='text-sm font-semibold text-white'>
-														$
-														{listing.price.toLocaleString()}
-													</p>
-												</div>
-												<div>
-													<p className='text-xs text-slate-500 flex items-center gap-1'>
-														<User size={12} />
-														Seller
-													</p>
-													<p className='text-sm font-semibold text-white'>
-														{listing.seller?.name}
-													</p>
-												</div>
-												<div>
-													<p className='text-xs text-slate-500'>
-														Status
-													</p>
+											{/* Content */}
+											<div className='flex-1 min-w-0'>
+												<div className='flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-2'>
+													<div>
+														<h3 className='font-semibold text-white text-lg truncate'>
+															{listing.title}
+														</h3>
+														<p className='text-sm text-slate-400'>
+															{listing.category}
+														</p>
+													</div>
 													<span
-														className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold mt-1 ${
-															listing.status ===
-															"active"
-																? "bg-green-500/20 text-green-400"
-																: listing.status ===
-																  "inactive"
-																? "bg-red-500/20 text-red-400"
-																: "bg-yellow-500/20 text-yellow-400"
-														}`}>
+														className={`px-3 py-1 rounded-full text-xs font-semibold border whitespace-nowrap ${getStatusColor(
+															listing.status
+														)}`}>
 														{listing.status
 															.charAt(0)
 															.toUpperCase() +
@@ -285,72 +226,127 @@ export default function AdminListingsPage() {
 															)}
 													</span>
 												</div>
-											</div>
-										</div>
 
-										{/* Action Buttons */}
-										<div className='flex gap-2 w-full md:w-auto flex-wrap md:flex-nowrap'>
-											{listing.status === "pending" && (
-												<div className='flex gap-2 flex-col'>
-													<Button
-														onClick={() =>
-															handleApprove(
-																listing._id
-															)
-														}
-														className='flex-1 md:flex-none bg-green-600 hover:bg-green-700 text-white gap-2'>
-														<CheckCircle
-															size={18}
-														/>
-														Approve
-													</Button>
-													<Button
-														onClick={() =>
-															handleReject(
-																listing._id
-															)
-														}
-														className='flex-1 md:flex-none bg-red-600 hover:bg-red-700 text-white gap-2'>
-														<XCircle size={18} />
-														Reject
-													</Button>
+												{/* Details Grid */}
+												<div className='grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm'>
+													<div>
+														<p className='text-slate-400'>
+															Price
+														</p>
+														<p className='font-bold text-white'>
+															$
+															{listing.price.toLocaleString()}
+														</p>
+													</div>
+													<div>
+														<p className='text-slate-400'>
+															Views
+														</p>
+														<p className='font-bold text-white'>
+															{listing.views}
+														</p>
+													</div>
+													<div>
+														<p className='text-slate-400'>
+															Bids
+														</p>
+														<p className='font-bold text-white'>
+															{listing.bids
+																?.length || 0}
+														</p>
+													</div>
+													<div>
+														<p className='text-slate-400'>
+															Created
+														</p>
+														<p className='font-bold text-white'>
+															{new Date(
+																listing.createdAt
+															).toLocaleDateString()}
+														</p>
+													</div>
 												</div>
-											)}
 
-											{listing.status === "active" && (
-												<div className='flex flex-col gap-2'>
-													<Button
+												{/* Action Buttons */}
+												<div className='flex flex-wrap gap-2'>
+													<Link
+														href={`/listing/${listing?._id}`}>
+														<button className='px-3 py-1 bg-slate-600 hover:bg-slate-500 text-white rounded text-sm font-medium transition-colors flex items-center gap-1'>
+															<EyeIcon
+																size={16}
+															/>
+															Preview
+														</button>
+													</Link>
+
+													<div className='relative group'>
+														<button className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-1'>
+															Status
+															<ChevronDown
+																size={16}
+															/>
+														</button>
+														<div className='absolute left-0 mt-1 w-32 bg-slate-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10'>
+															{[
+																"active",
+																"pending",
+																"sold",
+																"draft",
+																"rejected",
+															].map((status) => (
+																<button
+																	key={status}
+																	onClick={() =>
+																		handleUpdateStatus(
+																			listing._id,
+																			status
+																		)
+																	}
+																	disabled={
+																		updating ===
+																		listing._id
+																	}
+																	className='w-full text-left px-4 py-2 text-sm text-white hover:bg-slate-600 first:rounded-t-lg last:rounded-b-lg transition-colors disabled:opacity-50'>
+																	{status
+																		.charAt(
+																			0
+																		)
+																		.toUpperCase() +
+																		status.slice(
+																			1
+																		)}
+																</button>
+															))}
+														</div>
+													</div>
+
+													<Link
+														href={`/dashboard/edit-listing/${listing._id}`}>
+														<Button
+															variant='outline'
+															size='sm'
+															className='bg-transparent border-slate-500 text-white hover:bg-slate-600 gap-1'>
+															<Edit2 size={16} />
+															Edit
+														</Button>
+													</Link>
+
+													<button
 														onClick={() =>
-															handleDeactivate(
+															handleDeleteListing(
 																listing._id
 															)
 														}
-														className='flex-1 md:flex-none bg-yellow-600 hover:bg-yellow-700 text-white gap-2 text-sm cursor-pointer'>
-														<EyeOff size={16} />
-														Deactivate
-													</Button>
-													<Button
-														onClick={() =>
-															handleSold(
-																listing._id
-															)
+														disabled={
+															deleting ===
+															listing._id
 														}
-														className='flex-1 md:flex-none bg-green-600 hover:bg-green-700 text-white gap-2 text-sm cursor-pointer'>
-														<Eye size={16} />
-														Sold
-													</Button>
-													<Button
-														onClick={() =>
-															handleDelete(
-																listing._id
-															)
-														}
-														className='flex-1 md:flex-none bg-red-600 hover:bg-red-700 text-white gap-2 text-sm cursor-pointer'>
+														className='px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-1 disabled:opacity-50'>
 														<Trash2 size={16} />
 														Delete
-													</Button>
+													</button>
 												</div>
-											)}
+											</div>
 										</div>
 									</div>
 								</CardContent>

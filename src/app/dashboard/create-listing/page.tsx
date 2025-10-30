@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { userContext } from "@/context/userContext";
 import { toast } from "sonner";
+import { X, Upload } from "lucide-react";
 
 const categories = [
 	"Website",
@@ -31,15 +32,41 @@ const categories = [
 	"Other",
 ];
 
+type ListingFormState = {
+	title: string;
+	description: string;
+	category: string;
+	price: string;
+	thumbnail: string;
+	images: string[];
+	metrics: {
+		monthlyRevenue: string;
+		monthlyTraffic: string;
+		followers: string;
+		subscribers: string;
+		engagement: string;
+		age: string;
+	};
+	details: {
+		niche: string;
+		monetization: string;
+		trafficSource: string;
+		growthPotential: string;
+	};
+};
+
 export default function CreateListing() {
 	const router = useRouter();
 	const { user } = userContext();
 	const [loading, setLoading] = useState(false);
-	const [formData, setFormData] = useState({
+	const [uploadingImages, setUploadingImages] = useState(false);
+	const [formData, setFormData] = useState<ListingFormState>({
 		title: "",
 		description: "",
 		category: "",
 		price: "",
+		thumbnail: "",
+		images: [],
 		metrics: {
 			monthlyRevenue: "",
 			monthlyTraffic: "",
@@ -94,6 +121,81 @@ export default function CreateListing() {
 		}));
 	};
 
+	const handleImageUpload = async (
+		e: React.ChangeEvent<HTMLInputElement>,
+		isThumbnail = false
+	) => {
+		const files = Array.from((e.target.files as FileList) || []);
+		if (files.length === 0) return;
+
+		if (!isThumbnail && formData.images.length + files.length > 6) {
+			alert("Maximum 6 images allowed");
+			return;
+		}
+
+		setUploadingImages(true);
+
+		try {
+			const authRes = await fetch("/api/imagekit/auth");
+			if (!authRes.ok) throw new Error("Failed to get ImageKit auth");
+			const { token, expire, signature, publicKey } =
+				await authRes.json();
+
+			const uploadedUrls: string[] = [];
+
+			for (const file of files) {
+				const form = new FormData();
+				form.append("file", file);
+				form.append("fileName", file.name);
+				form.append("publicKey", publicKey);
+				form.append("signature", signature);
+				form.append("expire", String(expire));
+				form.append("token", token);
+				form.append("useUniqueFileName", "true");
+
+				const uploadRes = await fetch(
+					"https://upload.imagekit.io/api/v1/files/upload",
+					{ method: "POST", body: form }
+				);
+
+				if (!uploadRes.ok) throw new Error("Image upload failed");
+				const data = await uploadRes.json();
+				if (data && data.url) uploadedUrls.push(data.url);
+			}
+
+			if (isThumbnail && uploadedUrls.length > 0) {
+				setFormData((prev) => ({
+					...prev,
+					thumbnail: uploadedUrls[0],
+				}));
+			} else if (uploadedUrls.length > 0) {
+				setFormData((prev) => ({
+					...prev,
+					images: [...prev.images, ...uploadedUrls],
+				}));
+			}
+		} catch (error) {
+			console.error("Upload failed:", error);
+			alert("Failed to upload images");
+		} finally {
+			setUploadingImages(false);
+		}
+	};
+
+	const removeImage = (index: any) => {
+		setFormData((prev) => ({
+			...prev,
+			images: prev.images.filter((_, i) => i !== index),
+		}));
+	};
+
+	const removeThumbnail = () => {
+		setFormData((prev) => ({
+			...prev,
+			thumbnail: "",
+		}));
+	};
+
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setLoading(true);
@@ -106,7 +208,6 @@ export default function CreateListing() {
 				...formData,
 				price: Number.parseFloat(formData.price),
 				userId: user?._id,
-				images: [],
 			});
 
 			if (response.data.success) {
@@ -349,13 +450,131 @@ export default function CreateListing() {
 								</div>
 							</div>
 
+							{/* Images */}
+							<div className='space-y-4'>
+								<h3 className='text-lg font-semibold text-white'>
+									Images
+								</h3>
+
+								{/* Thumbnail Upload */}
+								<div>
+									<label className='block text-sm font-medium text-slate-300 mb-2'>
+										Thumbnail Image
+									</label>
+									<div className='flex items-center gap-4'>
+										<label className='flex-1 flex items-center justify-center border-2 border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition'>
+											<div className='text-center'>
+												<Upload className='w-6 h-6 text-slate-400 mx-auto mb-2' />
+												<span className='text-sm text-slate-400'>
+													Click to upload thumbnail
+												</span>
+											</div>
+											<input
+												type='file'
+												accept='image/*'
+												onChange={(e) =>
+													handleImageUpload(e, true)
+												}
+												disabled={uploadingImages}
+												className='hidden'
+											/>
+										</label>
+										{formData.thumbnail && (
+											<div className='relative w-24 h-24'>
+												<img
+													src={
+														formData.thumbnail ||
+														"/placeholder.svg"
+													}
+													alt='Thumbnail'
+													className='w-full h-full object-cover rounded-lg'
+												/>
+												<button
+													type='button'
+													onClick={removeThumbnail}
+													className='absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600'>
+													<X className='w-4 h-4 text-white' />
+												</button>
+											</div>
+										)}
+									</div>
+								</div>
+
+								{/* Additional Images Upload */}
+								<div>
+									<label className='block text-sm font-medium text-slate-300 mb-2'>
+										Additional Images (up to 6)
+									</label>
+									<label className='flex items-center justify-center border-2 border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition'>
+										<div className='text-center'>
+											<Upload className='w-6 h-6 text-slate-400 mx-auto mb-2' />
+											<span className='text-sm text-slate-400'>
+												Click to upload images (
+												{formData.images.length}/6)
+											</span>
+										</div>
+										<input
+											type='file'
+											accept='image/*'
+											multiple
+											onChange={(e) =>
+												handleImageUpload(e, false)
+											}
+											disabled={
+												uploadingImages ||
+												formData.images.length >= 6
+											}
+											className='hidden'
+										/>
+									</label>
+
+									{/* Image Preview Grid */}
+									{formData.images.length > 0 && (
+										<div className='grid grid-cols-2 md:grid-cols-3 gap-4 mt-4'>
+											{formData.images.map(
+												(image, index) => (
+													<div
+														key={index}
+														className='relative group'>
+														<img
+															src={
+																image ||
+																"/placeholder.svg"
+															}
+															alt={`Image ${
+																index + 1
+															}`}
+															className='w-full h-32 object-cover rounded-lg'
+														/>
+														<button
+															type='button'
+															onClick={() =>
+																removeImage(
+																	index
+																)
+															}
+															className='absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition'>
+															<X className='w-4 h-4 text-white' />
+														</button>
+													</div>
+												)
+											)}
+										</div>
+									)}
+								</div>
+							</div>
+
 							{/* Submit */}
 							<div className='flex gap-4'>
 								<Button
 									type='submit'
-									disabled={loading}
+									disabled={loading || uploadingImages}
 									className='bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
-									{loading ? "Creating..." : "Create Listing"}
+									{loading
+										? "Creating..."
+										: uploadingImages
+										? "Uploading..."
+										: "Create Listing"}
 								</Button>
 								<Button
 									type='button'
