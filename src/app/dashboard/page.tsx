@@ -168,7 +168,7 @@ export default function Dashboard() {
 						</p>
 					</div>
 					<Link href='/dashboard/create-listing'>
-						<Button className='bg-linear-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white gap-2'>
+						<Button className='bg-linear-to-br cursor-pointer from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white gap-2'>
 							<Plus size={20} />
 							Create Listing
 						</Button>

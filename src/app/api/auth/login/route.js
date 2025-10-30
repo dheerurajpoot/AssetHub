@@ -18,6 +18,16 @@ export async function POST(request) {
 				{ status: 401 }
 			);
 		}
+		if (!user.verified) {
+			return NextResponse.json(
+				{
+					success: false,
+					message:
+						"Account not verified. Please check your email for the verification code.",
+				},
+				{ status: 401 }
+			);
+		}
 
 		// Check password
 		const isPasswordValid = await bcrypt.compare(password, user.password);

@@ -90,13 +90,9 @@ export async function POST(request) {
 			seller: userId,
 		});
 
-		await User.findByIdAndUpdate(
-			userId,
-			{
-				$push: { listings: listing._id },
-			},
-			{ new: true }
-		);
+		await User.findByIdAndUpdate(userId, {
+			$push: { listings: listing._id },
+		});
 
 		return NextResponse.json({ success: true, listing }, { status: 201 });
 	} catch (error) {

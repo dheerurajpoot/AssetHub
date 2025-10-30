@@ -12,6 +12,7 @@ export default function AdminUsersPage() {
 	const [users, setUsers] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [searchTerm, setSearchTerm] = useState("");
+	const [editingUser, setEditingUser] = useState<any>(null);
 
 	useEffect(() => {
 		const fetchUsers = async () => {
@@ -39,6 +40,80 @@ export default function AdminUsersPage() {
 			user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			user.email.toLowerCase().includes(searchTerm.toLowerCase())
 	);
+
+	// HANDLERS FOR ACTION BUTTONS
+	const handleVerifyUser = async (targetUser: any, verify: boolean) => {
+		if (!user) return;
+		try {
+			await fetch("/api/admin/users", {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					userId: targetUser._id,
+					action: verify ? "verify" : "unverify",
+					adminId: user._id,
+				}),
+			});
+			setUsers((prev: any) =>
+				prev.map((u: any) =>
+					u._id === targetUser._id ? { ...u, verified: verify } : u
+				)
+			);
+		} catch (err) {
+			alert("Failed to update verification status.");
+		}
+	};
+
+	const handleBlockUser = async (targetUser: any, block: boolean) => {
+		if (!user) return;
+		try {
+			await fetch("/api/admin/users", {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					userId: targetUser._id,
+					action: block ? "block" : "unblock",
+					adminId: user._id,
+				}),
+			});
+			setUsers((prev: any) =>
+				prev.map((u: any) =>
+					u._id === targetUser._id ? { ...u, isBlocked: block } : u
+				)
+			);
+		} catch (err) {
+			alert(block ? "Failed to block user." : "Failed to unblock user.");
+		}
+	};
+
+	const handleDeleteUser = async (targetUser: any) => {
+		if (!user) return;
+		if (
+			!confirm(
+				"Are you sure you want to delete this user? This cannot be undone."
+			)
+		)
+			return;
+		try {
+			await fetch(
+				`/api/admin/users?adminId=${user._id}&userId=${targetUser._id}`,
+				{
+					method: "DELETE",
+				}
+			);
+			setUsers((prev: any) =>
+				prev.filter((u: any) => u._id !== targetUser._id)
+			);
+		} catch (err) {
+			alert("Failed to delete user.");
+		}
+	};
+
+	const handleEditUser = (targetUser: any) => {
+		// Placeholder for edit modal logic
+		setEditingUser(targetUser);
+		alert("Edit user coming soon!");
+	};
 
 	return (
 		<div className='flex min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900'>
@@ -154,9 +229,84 @@ export default function AdminUsersPage() {
 														).toLocaleDateString()}
 													</td>
 													<td className='px-6 py-4 text-sm'>
-														<Button className='bg-green-600 hover:bg-green-700 text-white text-xs'>
-															Action
-														</Button>
+														<div className='flex flex-wrap gap-2'>
+															<Button
+																size='sm'
+																variant='outline'
+																className='border-slate-600 text-slate-300 hover:bg-slate-700 text-xs px-3 cursor-pointer'
+																onClick={() =>
+																	handleEditUser(
+																		user
+																	)
+																}>
+																Edit
+															</Button>
+															{user.verified ? (
+																<Button
+																	size='sm'
+																	variant='outline'
+																	className='border-slate-600 text-yellow-400 hover:bg-yellow-600/20 text-xs px-3 cursor-pointer'
+																	onClick={() =>
+																		handleVerifyUser(
+																			user,
+																			false
+																		)
+																	}
+																	disabled={
+																		user.isBlocked
+																	}>
+																	Unverify
+																</Button>
+															) : (
+																<Button
+																	size='sm'
+																	variant='outline'
+																	className='border-slate-600 text-green-400 hover:bg-green-600/20 text-xs px-3 cursor-pointer'
+																	onClick={() =>
+																		handleVerifyUser(
+																			user,
+																			true
+																		)
+																	}
+																	disabled={
+																		user.isBlocked
+																	}>
+																	Verify
+																</Button>
+															)}
+															<Button
+																size='sm'
+																variant='outline'
+																className={`border-slate-600 cursor-pointer ${
+																	user.isBlocked
+																		? "text-green-400"
+																		: "text-red-400"
+																} hover:bg-slate-700 text-xs px-3`}
+																onClick={() =>
+																	handleBlockUser(
+																		user,
+																		!user.isBlocked
+																	)
+																}>
+																{user.isBlocked
+																	? "Unblock"
+																	: "Block"}
+															</Button>
+															<Button
+																size='sm'
+																variant='destructive'
+																className='text-xs px-3 bg-red-600 cursor-pointer border-red-600 hover:bg-red-700 hover:border-red-700 text-white'
+																onClick={() =>
+																	handleDeleteUser(
+																		user
+																	)
+																}
+																disabled={
+																	user.isBlocked
+																}>
+																Delete
+															</Button>
+														</div>
 													</td>
 												</tr>
 											))}

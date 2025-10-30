@@ -58,7 +58,7 @@ export default function Navbar() {
 							{user ? (
 								<div className='flex items-center gap-4'>
 									<Link href='/dashboard'>
-										<Button className='bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
+										<Button className='bg-linear-to-r cursor-pointer from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
 											Dashboard
 										</Button>
 									</Link>
@@ -66,7 +66,7 @@ export default function Navbar() {
 										onClick={handleLogout}
 										variant='outline'
 										size='icon'
-										className='border-slate-600 text-slate-300 hover:bg-slate-800 bg-transparent'>
+										className='border-slate-600 cursor-pointer text-slate-300 hover:bg-slate-200 bg-transparent'>
 										<LogOut size={20} />
 									</Button>
 								</div>
@@ -75,12 +75,12 @@ export default function Navbar() {
 									<Link href='/login'>
 										<Button
 											variant='outline'
-											className='border-slate-600 text-slate-300 hover:bg-slate-800 bg-transparent'>
+											className='border-slate-600 cursor-pointer text-slate-300 hover:bg-slate-800 bg-transparent'>
 											Login
 										</Button>
 									</Link>
 									<Link href='/signup'>
-										<Button className='bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
+										<Button className='bg-linear-to-r cursor-pointer from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
 											Sign Up
 										</Button>
 									</Link>

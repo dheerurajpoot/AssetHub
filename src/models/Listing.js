@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import "./Bid";
 
 const listingSchema = new mongoose.Schema(
 	{
@@ -47,6 +48,8 @@ const listingSchema = new mongoose.Schema(
 			default: "pending",
 		},
 		metrics: {
+			assetLink: String,
+			country: String,
 			monthlyRevenue: Number,
 			monthlyTraffic: Number,
 			followers: Number,
@@ -59,12 +62,14 @@ const listingSchema = new mongoose.Schema(
 			monetization: String,
 			trafficSource: String,
 			growthPotential: String,
+			paymentReceived: String,
+			adManager: String,
+			domainProvider: String,
+			domainExpiry: String,
+			platform: String,
+			issue: String,
 		},
-		verificationStatus: {
-			type: String,
-			enum: ["pending", "verified", "rejected"],
-			default: "pending",
-		},
+
 		views: {
 			type: Number,
 			default: 0,

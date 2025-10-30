@@ -27,7 +27,14 @@ const userSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
-
+		isEmailVerified: {
+			type: Boolean,
+			default: false,
+		},
+		isBlocked: {
+			type: Boolean,
+			default: false,
+		},
 		totalSales: {
 			type: Number,
 			default: 0,
@@ -51,6 +58,10 @@ const userSchema = new mongoose.Schema(
 				ref: "Listing",
 			},
 		],
+		emailVerificationOtp: String,
+		emailVerificationExpiry: Date,
+		passwordResetToken: String,
+		passwordResetExpiry: Date,
 	},
 	{ timestamps: true }
 );

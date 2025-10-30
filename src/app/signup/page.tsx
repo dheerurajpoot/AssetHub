@@ -18,6 +18,7 @@ export default function SignUp() {
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
+		phone: "",
 		password: "",
 		confirmPassword: "",
 	});
@@ -40,24 +41,48 @@ export default function SignUp() {
 			return;
 		}
 
+		if (
+			!formData.phone ||
+			!formData.phone.startsWith("+") ||
+			formData.phone.length < 10
+		) {
+			setError(
+				"Please enter your phone number with country code, e.g. +15551234567"
+			);
+			setLoading(false);
+			return;
+		}
+
 		try {
 			const response = await axios.post("/api/auth/signup", {
 				name: formData.name,
 				email: formData.email,
+				phone: formData.phone,
 				password: formData.password,
 			});
 
 			const data = response.data;
 			if (data.success) {
-				toast.success(data.message || "Signup successful");
-				setTimeout(() => {
-					router.push("/login");
-				}, 1000);
+				if (data.next === "verify-otp") {
+					toast.success(
+						"Check your email for the verification code."
+					);
+					router.push(
+						`/verify-otp?email=${encodeURIComponent(
+							formData.email
+						)}`
+					);
+				} else {
+					toast.success(data.message || "Signup successful");
+					setTimeout(() => {
+						router.push("/login");
+					}, 1200);
+				}
 			} else {
 				setError(data.message || "Signup failed");
 			}
-		} catch (err) {
-			setError("An error occurred. Please try again.");
+		} catch (err: any) {
+			setError(err.response.data.message || "Something went wrong!");
 		} finally {
 			setLoading(false);
 		}
@@ -135,6 +160,31 @@ export default function SignUp() {
 										onChange={handleChange}
 										required
 										className='pl-10 bg-slate-700 border-slate-600 text-white placeholder:text-slate-500'
+									/>
+								</div>
+							</div>
+
+							<div>
+								<Label
+									htmlFor='phone'
+									className='text-slate-300'>
+									Phone Number
+								</Label>
+								<div className='relative mt-2'>
+									<span className='absolute left-3 top-3 text-slate-500 text-sm'>
+										+
+									</span>
+									<Input
+										id='phone'
+										name='phone'
+										type='tel'
+										placeholder='+917897315148'
+										value={formData.phone}
+										onChange={handleChange}
+										required
+										className='pl-8 bg-slate-700 border-slate-600 text-white placeholder:text-slate-500'
+										minLength={10}
+										pattern='\+[0-9]{10,15}'
 									/>
 								</div>
 							</div>

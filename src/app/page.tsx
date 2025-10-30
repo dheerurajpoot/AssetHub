@@ -188,7 +188,8 @@ export default function Home() {
 						{listings.slice(0, 6).map((listing: any) => (
 							<Link
 								key={listing._id}
-								href={`/listing/${listing._id}`}>
+								href={`/listing/${listing._id}`}
+								className='mx-1'>
 								<Card className='bg-slate-800 border-slate-700 hover:border-blue-500 transition-colors cursor-pointer'>
 									<CardContent className='p-4'>
 										<div className='flex flex-col sm:flex-row gap-4'>
@@ -250,7 +251,7 @@ export default function Home() {
 												</div>
 
 												{/* Metrics */}
-												<div className='grid grid-cols-2 md:grid-cols-4 gap-3 mt-4'>
+												<div className='grid grid-cols-4 md:grid-cols-6 gap-3 mt-3'>
 													{listing.metrics
 														?.monthlyRevenue && (
 														<div className='p-3 bg-slate-700/60 rounded border border-slate-600'>

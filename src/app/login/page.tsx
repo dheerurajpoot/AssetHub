@@ -48,6 +48,15 @@ export default function Login() {
 				);
 			} else {
 				setError(data.message || "Login failed");
+				// If unverified, prompt and redirect
+				if (data.message && data.message.includes("verify")) {
+					toast.error(data.message);
+					router.push(
+						`/verify-otp?email=${encodeURIComponent(
+							formData.email
+						)}`
+					);
+				}
 			}
 		} catch (err: any) {
 			const res = err.response.data;
@@ -140,6 +149,13 @@ export default function Login() {
 								{loading ? "Logging in..." : "Login"}
 								<ArrowRight size={18} />
 							</Button>
+							<p className='text-right mt-1'>
+								<Link
+									href='/forgot-password'
+									className='text-cyan-400 underline text-sm hover:text-blue-300'>
+									Forgot password?
+								</Link>
+							</p>
 						</form>
 
 						<div className='mt-6 pt-6 border-t border-slate-700'>

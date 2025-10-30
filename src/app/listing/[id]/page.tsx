@@ -185,6 +185,26 @@ export default function ListingDetail({
 
 								{/* Metrics Grid */}
 								<div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+									{listing.metrics?.assetLink && (
+										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+											<p className='text-xs text-slate-400 mb-1'>
+												Link/URL
+											</p>
+											<p className='text-xl font-bold text-white'>
+												${listing.metrics.assetLink}
+											</p>
+										</div>
+									)}
+									{listing.metrics?.country && (
+										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+											<p className='text-xs text-slate-400 mb-1'>
+												Country
+											</p>
+											<p className='text-xl font-bold text-white'>
+												${listing.metrics.country}
+											</p>
+										</div>
+									)}
 									{listing.metrics?.monthlyRevenue && (
 										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
 											<p className='text-xs text-slate-400 mb-1'>
@@ -258,13 +278,103 @@ export default function ListingDetail({
 											{listing.details.trafficSource && (
 												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
 													<p className='text-xs text-slate-400'>
-														Traffic Source
+														Traffic Source/Reach
 													</p>
 													<p className='text-white font-semibold'>
 														{
 															listing.details
 																.trafficSource
 														}
+													</p>
+												</div>
+											)}
+											{listing.details
+												.growthPotential && (
+												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+													<p className='text-xs text-slate-400'>
+														Growth Potential
+													</p>
+													<p className='text-white font-semibold'>
+														{
+															listing.details
+																.growthPotential
+														}
+													</p>
+												</div>
+											)}
+											{listing.details
+												.paymentReceived && (
+												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+													<p className='text-xs text-slate-400'>
+														Payment Received
+													</p>
+													<p className='text-white font-semibold'>
+														{
+															listing.details
+																.paymentReceived
+														}
+													</p>
+												</div>
+											)}
+											{listing.details.adManager && (
+												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+													<p className='text-xs text-slate-400'>
+														Ad Manager Used
+													</p>
+													<p className='text-white font-semibold'>
+														{
+															listing.details
+																.adManager
+														}
+													</p>
+												</div>
+											)}
+											{listing.details.domainProvider && (
+												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+													<p className='text-xs text-slate-400'>
+														Domain Provider
+													</p>
+													<p className='text-white font-semibold'>
+														{
+															listing.details
+																.domainProvider
+														}
+													</p>
+												</div>
+											)}
+											{listing.details.domainExpiry && (
+												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+													<p className='text-xs text-slate-400'>
+														Domain Expiry
+													</p>
+													<p className='text-white font-semibold'>
+														{
+															listing.details
+																.domainExpiry
+														}
+													</p>
+												</div>
+											)}
+											{listing.details.platform && (
+												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+													<p className='text-xs text-slate-400'>
+														Platform
+													</p>
+													<p className='text-white font-semibold'>
+														{
+															listing.details
+																.platform
+														}
+													</p>
+												</div>
+											)}
+											{listing.details.issue && (
+												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
+													<p className='text-xs text-slate-400'>
+														Any Issues
+													</p>
+													<p className='text-white font-semibold'>
+														{listing.details.issue}
 													</p>
 												</div>
 											)}

@@ -46,12 +46,20 @@ type ListingFormState = {
 		subscribers: string;
 		engagement: string;
 		age: string;
+		assetLink: string;
+		country: string;
 	};
 	details: {
 		niche: string;
 		monetization: string;
 		trafficSource: string;
 		growthPotential: string;
+		paymentReceived: string;
+		adManager: string;
+		domainProvider: string;
+		domainExpiry: string;
+		platform: string;
+		issue: string;
 	};
 };
 
@@ -74,12 +82,20 @@ export default function CreateListing() {
 			subscribers: "",
 			engagement: "",
 			age: "",
+			assetLink: "",
+			country: "",
 		},
 		details: {
 			niche: "",
 			monetization: "",
 			trafficSource: "",
 			growthPotential: "",
+			paymentReceived: "",
+			adManager: "",
+			domainProvider: "",
+			domainExpiry: "",
+			platform: "",
+			issue: "",
 		},
 	});
 
@@ -323,6 +339,32 @@ export default function CreateListing() {
 								<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 									<div>
 										<label className='block text-sm font-medium text-slate-300 mb-2'>
+											Link/URL
+										</label>
+										<Input
+											name='assetLink'
+											type='text'
+											value={formData.metrics.assetLink}
+											onChange={handleMetricsChange}
+											placeholder='https://example.com'
+											className='bg-slate-700 border-slate-600 text-white'
+										/>
+									</div>
+									<div>
+										<label className='block text-sm font-medium text-slate-300 mb-2'>
+											Country
+										</label>
+										<Input
+											name='country'
+											type='text'
+											value={formData.metrics.country}
+											onChange={handleMetricsChange}
+											placeholder='Country....'
+											className='bg-slate-700 border-slate-600 text-white'
+										/>
+									</div>
+									<div>
+										<label className='block text-sm font-medium text-slate-300 mb-2'>
 											Monthly Revenue ($)
 										</label>
 										<Input
@@ -339,7 +381,7 @@ export default function CreateListing() {
 
 									<div>
 										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Monthly Traffic
+											Monthly Traffic/Reach
 										</label>
 										<Input
 											name='monthlyTraffic'
@@ -365,6 +407,10 @@ export default function CreateListing() {
 											placeholder='0'
 											className='bg-slate-700 border-slate-600 text-white'
 										/>
+										<p className='text-gray-300 my-1 text-xs'>
+											Note: This field is not for
+											websites.
+										</p>
 									</div>
 
 									<div>
@@ -444,6 +490,84 @@ export default function CreateListing() {
 											}
 											onChange={handleDetailsChange}
 											placeholder='e.g., High, Medium, Low'
+											className='bg-slate-700 border-slate-600 text-white'
+										/>
+									</div>
+									<div>
+										<label className='block text-sm font-medium text-slate-300 mb-2'>
+											Payment Received
+										</label>
+										<Input
+											name='paymentReceived'
+											value={
+												formData.details.paymentReceived
+											}
+											onChange={handleDetailsChange}
+											placeholder='e.g., 1, 2, 3'
+											className='bg-slate-700 border-slate-600 text-white'
+										/>
+									</div>
+									<div>
+										<label className='block text-sm font-medium text-slate-300 mb-2'>
+											Ad Manager Used (Yes/No)
+										</label>
+										<Input
+											name='adManager'
+											value={formData.details.adManager}
+											onChange={handleDetailsChange}
+											placeholder='e.g., Yes/No'
+											className='bg-slate-700 border-slate-600 text-white'
+										/>
+									</div>
+									<div>
+										<label className='block text-sm font-medium text-slate-300 mb-2'>
+											Domain Provider
+										</label>
+										<Input
+											name='domainProvider'
+											value={
+												formData.details.domainProvider
+											}
+											onChange={handleDetailsChange}
+											placeholder='e.g., Godaddy, Namecheap...'
+											className='bg-slate-700 border-slate-600 text-white'
+										/>
+									</div>
+									<div>
+										<label className='block text-sm font-medium text-slate-300 mb-2'>
+											Domain Expiry
+										</label>
+										<Input
+											name='domainExpiry'
+											value={
+												formData.details.domainExpiry
+											}
+											onChange={handleDetailsChange}
+											placeholder='e.g., Expiry date...'
+											className='bg-slate-700 border-slate-600 text-white'
+										/>
+									</div>
+									<div>
+										<label className='block text-sm font-medium text-slate-300 mb-2'>
+											Platform
+										</label>
+										<Input
+											name='platform'
+											value={formData.details.platform}
+											onChange={handleDetailsChange}
+											placeholder='e.g., WordPress, Blogger...'
+											className='bg-slate-700 border-slate-600 text-white'
+										/>
+									</div>
+									<div>
+										<label className='block text-sm font-medium text-slate-300 mb-2'>
+											Any Issue (Limit/Policy)
+										</label>
+										<Input
+											name='issue'
+											value={formData.details.issue}
+											onChange={handleDetailsChange}
+											placeholder='e.g., Limit, Policy Issue...'
 											className='bg-slate-700 border-slate-600 text-white'
 										/>
 									</div>
