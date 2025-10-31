@@ -126,12 +126,17 @@ export default function ProfilePage({
 												✓ Verified Seller
 											</div>
 										)}
+										{user.role === "admin" && (
+											<div className='inline-block px-3 py-1 bg-green-500/20 border border-green-500/50 rounded-full text-green-400 text-sm font-medium'>
+												✓ Admin
+											</div>
+										)}
 									</div>
 
 									{/* Contact Buttons */}
 									<div className='flex flex-col gap-2 w-full md:w-auto'>
 										<a href={`mailto:${user.email}`}>
-											<Button className='w-full bg-blue-600 hover:bg-blue-700 text-white'>
+											<Button className='w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white'>
 												<Mail
 													size={18}
 													className='mr-2'
@@ -147,7 +152,7 @@ export default function ProfilePage({
 												)}`}
 												target='_blank'
 												rel='noopener noreferrer'>
-												<Button className='w-full bg-green-600 hover:bg-green-700 text-white'>
+												<Button className='w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white'>
 													<MessageCircle
 														size={18}
 														className='mr-2'

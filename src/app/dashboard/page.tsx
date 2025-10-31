@@ -276,7 +276,7 @@ export default function Dashboard() {
 													<div className='flex-1 min-w-0'>
 														<div className='flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-2'>
 															<div>
-																<h3 className='font-semibold text-white text-lg truncate wrap-break-word'>
+																<h3 className='font-semibold text-white text-lg truncate text-wrap'>
 																	{
 																		listing.title
 																	}

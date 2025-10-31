@@ -14,6 +14,7 @@ import {
 	MessageCircle,
 	TrendingDown,
 	Verified,
+	Loader2,
 } from "lucide-react";
 import axios from "axios";
 import { userContext } from "@/context/userContext";
@@ -106,7 +107,7 @@ export default function ListingDetail({
 	if (loading) {
 		return (
 			<div className='flex items-center text-white justify-center min-h-screen'>
-				Loading...
+				<Loader2 className='h-12 w-12 animate-spin' />
 			</div>
 		);
 	}
@@ -473,7 +474,7 @@ export default function ListingDetail({
 													listing.seller.phone
 												)
 											}
-											className='w-full bg-green-600 hover:bg-green-700 text-white gap-2 cursor-pointer'>
+											className='w-full cursor-pointer bg-green-600 hover:bg-green-700 text-white gap-2 '>
 											<MessageCircle size={18} />
 											Contact on WhatsApp
 										</Button>
@@ -487,14 +488,14 @@ export default function ListingDetail({
 														"917755089819"
 													)
 												}
-												className='flex-1 cursor-pointer border-slate-600 text-slate-300 hover:bg-slate-700'>
+												className='flex-1 cursor-pointer border-slate-600 text-slate-500 hover:text-gray-300 hover:bg-slate-700'>
 												<MessageCircle size={20} />
 												Admin
 											</Button>
 											<Button
 												variant='outline'
 												size='icon'
-												className='flex-1 cursor-pointer border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent'>
+												className='flex-1 cursor-pointer border-slate-600 text-slate-300 hover:text-gray-300 hover:bg-slate-700 bg-transparent'>
 												<Share2 size={20} /> Share
 											</Button>
 										</div>
@@ -681,6 +682,12 @@ export default function ListingDetail({
 												/>
 											) : (
 												""
+											)}
+											{listing.seller?.role ===
+												"admin" && (
+												<p className='text-xs mt-2 italic text-green-300 font-light'>
+													(Admin)
+												</p>
 											)}
 										</p>
 										<div className='flex items-center gap-1'>
