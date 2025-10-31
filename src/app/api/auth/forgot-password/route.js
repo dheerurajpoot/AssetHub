@@ -23,7 +23,7 @@ export async function POST(request) {
 			const html = generatePasswordResetEmail(resetLink);
 			await sendEmail({
 				to: email,
-				subject: "Reset Your Password - AssetHub",
+				subject: `Reset Your Password - ${process.env.COMPANY_NAME}`,
 				html,
 			});
 		}

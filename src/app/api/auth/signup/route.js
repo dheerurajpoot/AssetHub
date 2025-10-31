@@ -59,7 +59,7 @@ export async function POST(request) {
 		const emailHtml = generateOTPEmail(otp);
 		await sendEmail({
 			to: email,
-			subject: "Verify Your Email - AssetHub",
+			subject: `Verify Your Email - ${process.env.COMPANY_NAME}`,
 			html: emailHtml,
 		});
 

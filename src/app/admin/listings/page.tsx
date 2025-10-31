@@ -36,11 +36,10 @@ export default function AdminListingsPage() {
 				return;
 			}
 			const statusParam = filter !== "all" ? `&status=${filter}` : "";
-			const response = await fetch(
+			const response = await axios.get(
 				`/api/admin/all-listings?adminId=${user?._id}${statusParam}`
 			);
-			const data = await response.json();
-			setListings(data);
+			setListings(response.data);
 		} catch (error) {
 			console.error("Failed to fetch listings:", error);
 		} finally {
@@ -60,20 +59,19 @@ export default function AdminListingsPage() {
 			if (!user) {
 				return;
 			}
-			const response = await fetch(`/api/listings/${listingId}`, {
-				method: "DELETE",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ userId: user?._id }),
+			const response = await axios.delete(`/api/listings/${listingId}`, {
+				data: { userId: user?._id },
 			});
 
-			if (response.ok) {
-				setListings(listings.filter((l: any) => l._id !== listingId));
+			if (response.data.success) {
+				toast.success("Listing deleted successfully");
+				await fetchListings();
 			} else {
-				alert("Failed to delete listing");
+				toast.error("Failed to delete listing");
 			}
 		} catch (error) {
 			console.error("Delete error:", error);
-			alert("Error deleting listing");
+			toast.error("Error deleting listing");
 		} finally {
 			setDeleting(null);
 		}
@@ -82,14 +80,13 @@ export default function AdminListingsPage() {
 	const handleUpdateStatus = async (listingId: string, newStatus: string) => {
 		setUpdating(listingId);
 		try {
-			const response = await fetch(`/api/listings/${listingId}`, {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ userId: user?._id, status: newStatus }),
+			const response = await axios.put(`/api/admin/all-listings`, {
+				listingId,
+				action: newStatus,
+				adminId: user?._id,
 			});
 
-			if (response.ok) {
-				await response.json();
+			if (response.data.success) {
 				toast.success("Status updated");
 				await fetchListings();
 			} else {
@@ -162,8 +159,8 @@ export default function AdminListingsPage() {
 									}
 									className={
 										filter === status
-											? "bg-linear-to-br from-blue-500 to-cyan-500"
-											: "border-slate-600 text-slate-300 hover:bg-slate-700"
+											? "bg-linear-to-br from-blue-500 to-cyan-500 cursor-pointer"
+											: "border-slate-600 text-slate-500 cursor-pointer hover:text-slate-300 hover:bg-slate-700"
 									}>
 									{status.charAt(0).toUpperCase() +
 										status.slice(1)}
@@ -230,7 +227,18 @@ export default function AdminListingsPage() {
 												</div>
 
 												{/* Details Grid */}
-												<div className='grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm'>
+												<div className='grid grid-cols-4 md:grid-cols-6 gap-3 mb-4 text-sm'>
+													<div>
+														<p className='text-slate-400'>
+															Link
+														</p>
+														<p className='font-bold text-white'>
+															{
+																listing.metrics
+																	.assetLink
+															}
+														</p>
+													</div>
 													<div>
 														<p className='text-slate-400'>
 															Price
@@ -238,6 +246,17 @@ export default function AdminListingsPage() {
 														<p className='font-bold text-white'>
 															$
 															{listing.price.toLocaleString()}
+														</p>
+													</div>
+													<div>
+														<p className='text-slate-400'>
+															Country
+														</p>
+														<p className='font-bold text-white'>
+															{
+																listing.metrics
+																	.country
+															}
 														</p>
 													</div>
 													<div>
@@ -273,7 +292,7 @@ export default function AdminListingsPage() {
 												<div className='flex flex-wrap gap-2'>
 													<Link
 														href={`/listing/${listing?._id}`}>
-														<button className='px-3 py-1 bg-slate-600 hover:bg-slate-500 text-white rounded text-sm font-medium transition-colors flex items-center gap-1'>
+														<button className='px-3 py-1 cursor-pointer bg-slate-600 hover:bg-slate-500 text-white rounded text-sm font-medium transition-colors flex items-center gap-1'>
 															<EyeIcon
 																size={16}
 															/>
@@ -282,7 +301,7 @@ export default function AdminListingsPage() {
 													</Link>
 
 													<div className='relative group'>
-														<button className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-1'>
+														<button className='px-3 py-1 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-1'>
 															Status
 															<ChevronDown
 																size={16}
@@ -308,7 +327,7 @@ export default function AdminListingsPage() {
 																		updating ===
 																		listing._id
 																	}
-																	className='w-full text-left px-4 py-2 text-sm text-white hover:bg-slate-600 first:rounded-t-lg last:rounded-b-lg transition-colors disabled:opacity-50'>
+																	className='w-full text-left cursor-pointer px-4 py-2 text-sm text-white hover:bg-slate-600 first:rounded-t-lg last:rounded-b-lg transition-colors disabled:opacity-50'>
 																	{status
 																		.charAt(
 																			0
@@ -327,7 +346,7 @@ export default function AdminListingsPage() {
 														<Button
 															variant='outline'
 															size='sm'
-															className='bg-transparent border-slate-500 text-white hover:bg-slate-600 gap-1'>
+															className='bg-transparent cursor-pointer border-slate-500 text-white hover:bg-slate-600 gap-1'>
 															<Edit2 size={16} />
 															Edit
 														</Button>
@@ -343,7 +362,7 @@ export default function AdminListingsPage() {
 															deleting ===
 															listing._id
 														}
-														className='px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-1 disabled:opacity-50'>
+														className='px-3 cursor-pointer py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-1 disabled:opacity-50'>
 														<Trash2 size={16} />
 														Delete
 													</button>

@@ -14,6 +14,7 @@ import {
 import AdminSidebar from "@/components/admin-sidebar";
 import axios from "axios";
 import { userContext } from "@/context/userContext";
+import { toast } from "sonner";
 
 export default function AdminPanel() {
 	const { user } = userContext();
@@ -27,72 +28,55 @@ export default function AdminPanel() {
 		totalBids: 0,
 	});
 
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				if (!user) {
-					return;
-				}
-				const response = await axios.get(
-					`/api/admin/listings?adminId=${user?._id}`
-				);
-				const data = await response.data;
-				setListings(data);
-
-				// Calculate stats
-				setStats({
-					totalListings: data.length,
-					totalUsers: 0,
-					pendingListings: data.filter(
-						(l: any) => l.status === "pending"
-					).length,
-					totalBids: 0,
-				});
-			} catch (error) {
-				console.error("Failed to fetch listings:", error);
-			} finally {
-				setLoading(false);
+	const fetchData = async () => {
+		try {
+			if (!user) {
+				return;
 			}
-		};
+			const response = await axios.get(
+				`/api/admin/all-listings?adminId=${user?._id}`
+			);
+			setListings(response.data);
 
+			// Calculate stats
+			setStats({
+				totalListings: response.data.length,
+				totalUsers: 0,
+				pendingListings: response.data.filter(
+					(l: any) => l.status === "pending"
+				).length,
+				totalBids: 0,
+			});
+		} catch (error) {
+			console.error("Failed to fetch listings:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
+	useEffect(() => {
 		fetchData();
 	}, [user]);
 
-	const handleApprove = async (listingId: string) => {
+	const handleStatusUpdate = async (listingId: string, status: string) => {
 		try {
 			if (!user) {
 				return;
 			}
-			const response = await axios.put("/api/admin/listings", {
+			const response = await axios.put("/api/admin/all-listings", {
 				listingId,
-				status: "verified",
+				action: status,
 				adminId: user?._id,
 			});
 
-			if (response.status === 200) {
-				setListings(listings.filter((l: any) => l._id !== listingId));
+			if (response.data.success) {
+				await fetchData();
+				toast.success("Listing status updated successfully");
+			} else {
+				toast.error("Failed to update listing status");
 			}
 		} catch (error) {
-			console.error("Failed to approve listing:", error);
-		}
-	};
-
-	const handleReject = async (listingId: string) => {
-		try {
-			if (!user) {
-				return;
-			}
-			const response = await axios.put("/api/admin/listings", {
-				listingId,
-				status: "rejected",
-				adminId: user?._id,
-			});
-
-			if (response.status === 200) {
-				setListings(listings.filter((l: any) => l._id !== listingId));
-			}
-		} catch (error) {
-			console.error("Failed to reject listing:", error);
+			console.error("Failed to update listing status:", error);
+			toast.error("Failed to update listing status");
 		}
 	};
 
@@ -193,8 +177,8 @@ export default function AdminPanel() {
 							variant={filter === status ? "default" : "outline"}
 							className={
 								filter === status
-									? "bg-linear-to-r from-blue-500 to-cyan-500"
-									: "border-slate-600 text-slate-300 hover:bg-slate-700"
+									? "bg-linear-to-r from-blue-500 cursor-pointer to-cyan-500"
+									: "border-slate-600 cursor-pointer text-slate-500 hover:text-slate-300 hover:bg-slate-700"
 							}>
 							{status.charAt(0).toUpperCase() + status.slice(1)}
 						</Button>
@@ -326,8 +310,9 @@ export default function AdminPanel() {
 											<div className='flex gap-2 w-full md:w-auto'>
 												<Button
 													onClick={() =>
-														handleApprove(
-															listing._id
+														handleStatusUpdate(
+															listing._id,
+															"active"
 														)
 													}
 													className='flex-1 md:flex-none bg-green-600 hover:bg-green-700 text-white gap-2'>
@@ -336,8 +321,9 @@ export default function AdminPanel() {
 												</Button>
 												<Button
 													onClick={() =>
-														handleReject(
-															listing._id
+														handleStatusUpdate(
+															listing._id,
+															"rejected"
 														)
 													}
 													className='flex-1 md:flex-none bg-red-600 hover:bg-red-700 text-white gap-2'>

@@ -355,7 +355,7 @@ export default function Dashboard() {
 																		true
 																	);
 																}}
-																className='px-3 py-1 bg-slate-600 hover:bg-slate-500 text-white rounded text-sm font-medium transition-colors flex items-center gap-1'>
+																className='px-3 py-1 cursor-pointer bg-slate-600 hover:bg-slate-500 text-white rounded text-sm font-medium transition-colors flex items-center gap-1'>
 																<EyeIcon
 																	size={16}
 																/>
@@ -363,7 +363,7 @@ export default function Dashboard() {
 															</button>
 
 															<div className='relative group'>
-																<button className='px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-1'>
+																<button className='px-3 py-1 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-1'>
 																	Status
 																	<ChevronDown
 																		size={
@@ -394,7 +394,7 @@ export default function Dashboard() {
 																					updating ===
 																					listing._id
 																				}
-																				className='w-full text-left px-4 py-2 text-sm text-white hover:bg-slate-600 first:rounded-t-lg last:rounded-b-lg transition-colors disabled:opacity-50'>
+																				className='w-full text-left cursor-pointer px-4 py-2 text-sm text-white hover:bg-slate-600 first:rounded-t-lg last:rounded-b-lg transition-colors disabled:opacity-50'>
 																				{status
 																					.charAt(
 																						0
@@ -408,21 +408,20 @@ export default function Dashboard() {
 																	)}
 																</div>
 															</div>
-
-															<Link
-																href={`/dashboard/edit-listing/${listing._id}`}>
-																<Button
-																	variant='outline'
-																	size='sm'
-																	className='bg-transparent border-slate-500 text-white hover:bg-slate-600 gap-1'>
-																	<Edit2
-																		size={
-																			16
-																		}
-																	/>
-																	Edit
-																</Button>
-															</Link>
+															<Button
+																variant='outline'
+																onClick={() =>
+																	alert(
+																		"Coming soon......!"
+																	)
+																}
+																size='sm'
+																className='bg-transparent cursor-pointer border-slate-500 text-white hover:bg-slate-600 gap-1'>
+																<Edit2
+																	size={16}
+																/>
+																Edit
+															</Button>
 
 															<button
 																onClick={() =>

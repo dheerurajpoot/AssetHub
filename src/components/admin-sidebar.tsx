@@ -8,12 +8,9 @@ import {
 	LayoutDashboard,
 	FileText,
 	Users,
-	Settings,
 	LogOut,
 	Menu,
 	X,
-	TrendingUp,
-	MessageSquare,
 } from "lucide-react";
 import { userContext } from "@/context/userContext";
 
@@ -26,7 +23,7 @@ export default function AdminSidebar() {
 		{ icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
 		{ icon: FileText, label: "Listings", href: "/admin/listings" },
 		{ icon: Users, label: "Users", href: "/admin/users" },
-		{ icon: MessageSquare, label: "Bids", href: "/admin/bids" },
+		// { icon: MessageSquare, label: "Bids", href: "/admin/bids" },
 		// { icon: TrendingUp, label: "Analytics", href: "/admin/analytics" },
 		// { icon: Settings, label: "Settings", href: "/admin/settings" },
 	];
@@ -69,7 +66,7 @@ export default function AdminSidebar() {
 							<Link key={item.href} href={item.href}>
 								<Button
 									variant={isActive ? "default" : "ghost"}
-									className={`w-full justify-start gap-3 ${
+									className={`w-full justify-start cursor-pointer gap-3 ${
 										isActive
 											? "bg-linear-to-r from-blue-500 to-cyan-500 text-white"
 											: "text-slate-400 hover:text-white hover:bg-slate-800"
@@ -87,7 +84,7 @@ export default function AdminSidebar() {
 				<div className='absolute bottom-6 left-6 right-6'>
 					<Button
 						onClick={handleLogout}
-						className='w-full bg-red-600 hover:bg-red-700 text-white gap-2'>
+						className='w-full cursor-pointer bg-red-600 hover:bg-red-700 text-white gap-2'>
 						<LogOut size={20} />
 						Logout
 					</Button>

@@ -20,6 +20,7 @@ import axios from "axios";
 import { userContext } from "@/context/userContext";
 import Link from "next/link";
 import Image from "next/image";
+import { toast } from "sonner";
 
 export default function ListingDetail({
 	params,
@@ -37,20 +38,19 @@ export default function ListingDetail({
 	const [submittingBid, setSubmittingBid] = useState(false);
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+	const fetchListing = async () => {
+		try {
+			const response = await axios.get(`/api/listings/${id}`);
+			const data = await response.data;
+			setListing(data);
+			setBidAmount(data?.price.toString());
+		} catch (error) {
+			console.error("Failed to fetch listing:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 	useEffect(() => {
-		const fetchListing = async () => {
-			try {
-				const response = await axios.get(`/api/listings/${id}`);
-				const data = await response.data;
-				setListing(data);
-				setBidAmount(data?.price.toString());
-			} catch (error) {
-				console.error("Failed to fetch listing:", error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
 		fetchListing();
 	}, [id]);
 
@@ -62,7 +62,7 @@ export default function ListingDetail({
 			return;
 		}
 
-		if (!bidAmount || Number.parseFloat(bidAmount) < listing?.price) {
+		if (!bidAmount || !(Number(bidAmount) < listing?.price)) {
 			alert("Bid amount must be at least the asking price");
 			return;
 		}
@@ -76,16 +76,17 @@ export default function ListingDetail({
 				message: bidMessage,
 			});
 
-			if (response.status === 200) {
+			if (response.data.success) {
 				const newBid = await response.data;
 				setBids([newBid, ...bids]);
 				setBidAmount("");
 				setBidMessage("");
-				alert("Bid placed successfully! Seller will contact you soon.");
+				await fetchListing();
+				toast.success("Bid placed successfully!");
 			}
 		} catch (error) {
 			console.error("Failed to place bid:", error);
-			alert("Failed to place bid");
+			toast.error("Failed to place bid");
 		} finally {
 			setSubmittingBid(false);
 		}
@@ -528,8 +529,7 @@ export default function ListingDetail({
 															{bid.bidder?.name ||
 																"Anonymous"}
 														</p>
-														<p className='font-semibold text-white text-sm'>
-															Phone:
+														<p className='font-light text-white text-sm'>
 															{bid.bidder
 																?.phone ||
 																"Unknown"}
@@ -561,7 +561,7 @@ export default function ListingDetail({
 																		bid.amount -
 																		listing.price
 																  ).toLocaleString()}`
-																: "Asking"}
+																: "Offer"}
 														</p>
 													</div>
 												</div>
@@ -598,8 +598,7 @@ export default function ListingDetail({
 											<Input
 												id='bidAmount'
 												type='number'
-												min={listing.price}
-												step='100'
+												min={listing.minBidAmount}
 												value={bidAmount}
 												onChange={(e) =>
 													setBidAmount(e.target.value)
@@ -609,7 +608,7 @@ export default function ListingDetail({
 											/>
 											<p className='text-xs text-slate-400 mt-1'>
 												Minimum: $
-												{listing.price.toLocaleString()}
+												{listing.minBidAmount.toLocaleString()}
 											</p>
 										</div>
 
@@ -685,9 +684,9 @@ export default function ListingDetail({
 											)}
 											{listing.seller?.role ===
 												"admin" && (
-												<p className='text-xs mt-2 italic text-green-300 font-light'>
+												<span className='text-xs mt-2 italic text-green-300 font-light'>
 													(Admin)
-												</p>
+												</span>
 											)}
 										</p>
 										<div className='flex items-center gap-1'>
@@ -726,7 +725,7 @@ export default function ListingDetail({
 								<Link href={`/profile/${listing.seller?._id}`}>
 									<Button
 										variant='outline'
-										className='w-full border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent cursor-pointer'>
+										className='w-full border-slate-600 text-slate-300 hover:text-gray-300 hover:bg-slate-700 bg-transparent cursor-pointer'>
 										View Profile
 									</Button>
 								</Link>
