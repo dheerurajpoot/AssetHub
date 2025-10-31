@@ -39,7 +39,6 @@ export async function PUT(request) {
 		await connectDB();
 
 		const admin = await User.findById(adminId);
-		console.log(admin);
 		if (!admin || admin.role !== "admin") {
 			return NextResponse.json(
 				{ message: "Unauthorized" },

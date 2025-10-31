@@ -35,24 +35,23 @@ export default function Dashboard() {
 	const [deleting, setDeleting] = useState<any>(null);
 	const [updating, setUpdating] = useState<any>(null);
 
+	const fetchDashboardData = async () => {
+		try {
+			if (!user) return;
+
+			const response = await fetch(`/api/users/${user?._id}`);
+			if (!response.ok) throw new Error("User not found");
+			const userData = await response.json();
+			setProfile(userData);
+
+			setListings(userData.listings || []);
+		} catch (error) {
+			console.error("Failed to fetch dashboard data:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 	useEffect(() => {
-		const fetchDashboardData = async () => {
-			try {
-				if (!user) return;
-
-				const response = await fetch(`/api/users/${user?._id}`);
-				if (!response.ok) throw new Error("User not found");
-				const userData = await response.json();
-				setProfile(userData);
-
-				setListings(userData.listings || []);
-			} catch (error) {
-				console.error("Failed to fetch dashboard data:", error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
 		fetchDashboardData();
 	}, [user]);
 
@@ -62,11 +61,11 @@ export default function Dashboard() {
 
 		setDeleting(listingId);
 		try {
-			const userId = localStorage.getItem("userId");
+			if (!user) return;
 			const response = await fetch(`/api/listings/${listingId}`, {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ userId }),
+				body: JSON.stringify({ userId: user?._id }),
 			});
 
 			if (response.ok) {
@@ -85,6 +84,7 @@ export default function Dashboard() {
 	const handleUpdateStatus = async (listingId: string, newStatus: string) => {
 		setUpdating(listingId);
 		try {
+			if (!user) return;
 			const response = await fetch(`/api/listings/${listingId}`, {
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
@@ -92,8 +92,9 @@ export default function Dashboard() {
 			});
 
 			if (response.ok) {
-				const updated = await response.json();
+				await response.json();
 				toast.success("Status updated");
+				await fetchDashboardData();
 			} else {
 				alert("Failed to update status");
 			}
@@ -208,7 +209,7 @@ export default function Dashboard() {
 				</div>
 
 				{/* Main Content */}
-				<div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+				<div className='grid'>
 					{/* Listings */}
 					<div className='lg:col-span-2'>
 						<Card className='bg-slate-800 border-slate-700'>
@@ -275,7 +276,7 @@ export default function Dashboard() {
 													<div className='flex-1 min-w-0'>
 														<div className='flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-2'>
 															<div>
-																<h3 className='font-semibold text-white text-lg truncate'>
+																<h3 className='font-semibold text-white text-lg truncate wrap-break-word'>
 																	{
 																		listing.title
 																	}
@@ -448,45 +449,6 @@ export default function Dashboard() {
 										<p className='text-slate-400 text-center py-8'>
 											No listings found. Create your first
 											one!
-										</p>
-									)}
-								</div>
-							</CardContent>
-						</Card>
-					</div>
-
-					{/* Recent Bids */}
-					<div>
-						<Card className='bg-slate-800 border-slate-700'>
-							<CardHeader>
-								<CardTitle className='text-white'>
-									Recent Bids
-								</CardTitle>
-								<CardDescription>
-									Bids on your listings
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<div className='space-y-3'>
-									{bids.length > 0 ? (
-										bids.slice(0, 5).map((bid: any) => (
-											<div
-												key={bid._id}
-												className='p-3 bg-slate-700 rounded-lg'>
-												<p className='text-sm font-semibold text-white'>
-													$
-													{bid.amount.toLocaleString()}
-												</p>
-												<p className='text-xs text-slate-400'>
-													{new Date(
-														bid.createdAt
-													).toLocaleDateString()}
-												</p>
-											</div>
-										))
-									) : (
-										<p className='text-slate-400 text-center py-8'>
-											No bids yet
 										</p>
 									)}
 								</div>

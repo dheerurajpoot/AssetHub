@@ -31,7 +31,6 @@ export default function Marketplace() {
 	const [selectedCategory, setSelectedCategory] = useState("All");
 	const [searchTerm, setSearchTerm] = useState("");
 	const [page, setPage] = useState(1);
-	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchListings = async () => {
@@ -176,11 +175,51 @@ export default function Marketplace() {
 													?.monthlyRevenue && (
 													<div className='text-xs'>
 														<p className='text-slate-500'>
-															Revenue
+															Monthly Revenue
 														</p>
 														<p className='font-bold text-white'>
 															$
 															{listing.metrics.monthlyRevenue.toLocaleString()}
+														</p>
+													</div>
+												)}
+												{listing.metrics?.country && (
+													<div className='text-xs'>
+														<p className='text-slate-500'>
+															Country
+														</p>
+														<p className='font-bold text-white'>
+															{
+																listing.metrics
+																	.country
+															}
+														</p>
+													</div>
+												)}
+												{listing.metrics?.age && (
+													<div className='text-xs'>
+														<p className='text-slate-500'>
+															Age
+														</p>
+														<p className='font-bold text-white'>
+															{
+																listing.metrics
+																	.age
+															}
+														</p>
+													</div>
+												)}
+												{listing.details
+													?.monetization && (
+													<div className='text-xs'>
+														<p className='text-slate-500'>
+															Monetization
+														</p>
+														<p className='font-bold text-white'>
+															{
+																listing.details
+																	.monetization
+															}
 														</p>
 													</div>
 												)}

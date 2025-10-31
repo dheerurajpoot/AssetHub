@@ -24,7 +24,10 @@ export async function GET(request) {
 				.skip((page - 1) * limit)
 				.limit(limit);
 		} else {
-			const publicQuery = { ...query, status: { $ne: "pending" } };
+			const publicQuery = {
+				...query,
+				status: { $in: ["active", "sold"] },
+			};
 			listings = await Listing.find(publicQuery)
 				.populate("seller", "name avatar rating")
 				.sort({ createdAt: -1 })

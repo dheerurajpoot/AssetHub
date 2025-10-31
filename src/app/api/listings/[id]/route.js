@@ -19,7 +19,7 @@ export async function GET(request) {
 			{ $inc: { views: 1 } },
 			{ new: true }
 		)
-			.populate("seller", "name avatar rating bio")
+			.populate("seller")
 			.populate({
 				path: "bids",
 				populate: {
@@ -82,8 +82,9 @@ export async function PUT(request) {
 	}
 }
 
-export async function DELETE(request, { params }) {
+export async function DELETE(request) {
 	try {
+		const id = extractIdFromRequest(request);
 		const { userId } = await request.json();
 
 		if (!userId) {
@@ -95,7 +96,7 @@ export async function DELETE(request, { params }) {
 
 		await connectDB();
 
-		const listing = await Listing.findById(params.id);
+		const listing = await Listing.findById(id);
 		if (!listing || listing.seller.toString() !== userId) {
 			return NextResponse.json(
 				{ message: "Unauthorized" },
@@ -103,9 +104,9 @@ export async function DELETE(request, { params }) {
 			);
 		}
 
-		await Listing.findByIdAndDelete(params.id);
+		await Listing.findByIdAndDelete(id);
 		await User.findByIdAndUpdate(userId, {
-			$pull: { listings: params.id },
+			$pull: { listings: id },
 		});
 
 		return NextResponse.json({ success: true });

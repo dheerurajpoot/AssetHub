@@ -1,23 +1,24 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
 	Star,
-	Heart,
 	Share2,
 	TrendingUp,
 	Calendar,
 	MessageCircle,
 	TrendingDown,
+	Verified,
 } from "lucide-react";
 import axios from "axios";
 import { userContext } from "@/context/userContext";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ListingDetail({
 	params,
@@ -29,7 +30,6 @@ export default function ListingDetail({
 	const router = useRouter();
 	const [listing, setListing] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
-	const [isFavorite, setIsFavorite] = useState(false);
 	const [bidAmount, setBidAmount] = useState("");
 	const [bidMessage, setBidMessage] = useState("");
 	const [bids, setBids] = useState<any[]>([]);
@@ -90,16 +90,15 @@ export default function ListingDetail({
 		}
 	};
 
-	const handleContactSeller = () => {
-		if (!listing?.seller?.whatsapp || !listing?.title || !listing) {
-			alert("Seller WhatsApp not available or listing not found");
+	const handleContactSeller = (phone: string) => {
+		console.log(phone);
+		if (!phone || !listing?.title) {
+			alert("WhatsApp number not available or listing not found");
 			return;
 		}
 		const message = `Hi, I'm interested in your listing: ${listing?.title}`;
 		window.open(
-			`https://wa.me/${listing.seller?.phone}?text=${encodeURIComponent(
-				message
-			)}`,
+			`https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
 			"_blank"
 		);
 	};
@@ -190,9 +189,12 @@ export default function ListingDetail({
 											<p className='text-xs text-slate-400 mb-1'>
 												Link/URL
 											</p>
-											<p className='text-xl font-bold text-white'>
-												${listing.metrics.assetLink}
-											</p>
+											<Link
+												href={listing.metrics.assetLink}
+												target='_blank'
+												className='text-sm font-semibold text-white text-wrap'>
+												{listing.metrics.assetLink}
+											</Link>
 										</div>
 									)}
 									{listing.metrics?.country && (
@@ -201,7 +203,7 @@ export default function ListingDetail({
 												Country
 											</p>
 											<p className='text-xl font-bold text-white'>
-												${listing.metrics.country}
+												{listing.metrics.country}
 											</p>
 										</div>
 									)}
@@ -466,7 +468,11 @@ export default function ListingDetail({
 								) : (
 									<div className='space-y-3'>
 										<Button
-											onClick={handleContactSeller}
+											onClick={() =>
+												handleContactSeller(
+													listing.seller.phone
+												)
+											}
 											className='w-full bg-green-600 hover:bg-green-700 text-white gap-2 cursor-pointer'>
 											<MessageCircle size={18} />
 											Contact on WhatsApp
@@ -477,23 +483,19 @@ export default function ListingDetail({
 												variant='outline'
 												size='icon'
 												onClick={() =>
-													setIsFavorite(!isFavorite)
+													handleContactSeller(
+														"917755089819"
+													)
 												}
-												className='flex-1 border-slate-600 text-slate-300 hover:bg-slate-700'>
-												<Heart
-													size={20}
-													fill={
-														isFavorite
-															? "currentColor"
-															: "none"
-													}
-												/>
+												className='flex-1 cursor-pointer border-slate-600 text-slate-300 hover:bg-slate-700'>
+												<MessageCircle size={20} />
+												Admin
 											</Button>
 											<Button
 												variant='outline'
 												size='icon'
-												className='flex-1 border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent'>
-												<Share2 size={20} />
+												className='flex-1 cursor-pointer border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent'>
+												<Share2 size={20} /> Share
 											</Button>
 										</div>
 									</div>
@@ -660,10 +662,26 @@ export default function ListingDetail({
 							</CardHeader>
 							<CardContent className='space-y-4'>
 								<div className='flex items-center gap-3'>
-									<div className='w-12 h-12 rounded-full bg-linear-to-br from-blue-500 to-cyan-500' />
+									<Image
+										className='rounded-full'
+										src={
+											listing.seller.avatar || "/user.jpg"
+										}
+										width={50}
+										height={50}
+										alt='Profile'
+									/>
 									<div>
-										<p className='font-semibold text-white'>
-											{listing.seller?.name}
+										<p className='font-semibold flex gap-1 text-white'>
+											{listing.seller?.name}{" "}
+											{listing.seller?.verified ? (
+												<Verified
+													color='white'
+													fill='green'
+												/>
+											) : (
+												""
+											)}
 										</p>
 										<div className='flex items-center gap-1'>
 											<Star
@@ -693,7 +711,8 @@ export default function ListingDetail({
 											Listings
 										</p>
 										<p className='font-bold text-white'>
-											{listing.seller?.totalListings || 0}
+											{listing.seller?.listings.length ||
+												0}
 										</p>
 									</div>
 								</div>

@@ -19,7 +19,6 @@ import {
 export default function Home() {
 	const [listings, setListings] = useState([]);
 	const [loading, setLoading] = useState(true);
-	const [selectedCategory, setSelectedCategory] = useState("");
 
 	useEffect(() => {
 		const fetchListings = async () => {
@@ -310,6 +309,21 @@ export default function Home() {
 																		.age
 																)}{" "}
 																months
+															</p>
+														</div>
+													)}
+													{listing.metrics
+														?.country && (
+														<div className='p-3 bg-slate-700/60 rounded border border-slate-600'>
+															<p className='text-xs text-slate-400'>
+																Country
+															</p>
+															<p className='text-white font-semibold'>
+																{
+																	listing
+																		.metrics
+																		.country
+																}
 															</p>
 														</div>
 													)}

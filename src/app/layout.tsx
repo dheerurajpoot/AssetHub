@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 	title: "AssetHub - Buy & Sell Digital Assets",
 	description:
 		"The trusted marketplace for buying and selling digital assets.",
+	keywords: "assetHub",
 };
 
 export default function RootLayout({
@@ -23,6 +24,33 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang='en' suppressHydrationWarning>
+			<head suppressHydrationWarning>
+				<meta
+					name='google-site-verification'
+					content='xxxxxxxxxxxxxxxxxxxxxxxxxx'
+				/>
+				{/* Google Analytics Script */}
+				<script
+					async
+					src='https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXX'
+				/>
+				<script
+					suppressHydrationWarning
+					dangerouslySetInnerHTML={{
+						__html: `
+							window.dataLayer = window.dataLayer || [];
+							function gtag(){dataLayer.push(arguments);}
+							gtag('js', new Date());
+							gtag('config', 'G-XXXXXXXXXXXXX');
+						`,
+					}}
+				/>
+				<script
+					async
+					src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXX'
+					crossOrigin='anonymous'
+				/>
+			</head>
 			<body
 				className={`${geistSans.className} bg-slate-900`}
 				suppressHydrationWarning>

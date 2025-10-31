@@ -3,7 +3,14 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, Mail, TrendingUp, Calendar } from "lucide-react";
+import {
+	CheckCircle,
+	XCircle,
+	Mail,
+	TrendingUp,
+	Calendar,
+	Phone,
+} from "lucide-react";
 import AdminSidebar from "@/components/admin-sidebar";
 import { userContext } from "@/context/userContext";
 
@@ -188,9 +195,16 @@ export default function AdminUsersPage() {
 													<td className='px-6 py-4 text-sm text-white font-medium'>
 														{user.name}
 													</td>
-													<td className='px-6 py-4 text-sm text-slate-400 flex items-center gap-2'>
-														<Mail size={16} />
-														{user.email}
+													<td className='px-6 py-4 text-sm text-slate-400 items-center gap-2'>
+														<span className='flex gap-1 items-center'>
+															<Mail size={16} />
+															{user.email}
+														</span>
+														<span className='flex gap-1 items-center'>
+															<Phone size={16} />
+															{user.phone ||
+																"Unknown"}
+														</span>
 													</td>
 													<td className='px-6 py-4 text-sm text-white'>
 														{user.listings.length}
@@ -220,10 +234,6 @@ export default function AdminUsersPage() {
 														)}
 													</td>
 													<td className='px-6 py-4 text-sm text-slate-400'>
-														<Calendar
-															size={16}
-															className='inline mr-2'
-														/>
 														{new Date(
 															user.createdAt
 														).toLocaleDateString()}

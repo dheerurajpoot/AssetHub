@@ -40,7 +40,7 @@ export async function PUT(request) {
 		const admin = await User.findById(adminId);
 		if (!admin || admin.role !== "admin") {
 			return NextResponse.json(
-				{ error: "Unauthorized" },
+				{ message: "Unauthorized" },
 				{ status: 401 }
 			);
 		}
@@ -59,7 +59,7 @@ export async function PUT(request) {
 	} catch (error) {
 		console.error("Admin user update error:", error);
 		return NextResponse.json(
-			{ error: "Failed to update user" },
+			{ message: "Failed to update user" },
 			{ status: 500 }
 		);
 	}
@@ -74,7 +74,7 @@ export async function DELETE(request) {
 		const admin = await User.findById(adminId);
 		if (!admin || admin.role !== "admin") {
 			return NextResponse.json(
-				{ error: "Unauthorized" },
+				{ message: "Unauthorized" },
 				{ status: 401 }
 			);
 		}
@@ -83,7 +83,7 @@ export async function DELETE(request) {
 	} catch (error) {
 		console.error("Admin user delete error:", error);
 		return NextResponse.json(
-			{ error: "Failed to delete user" },
+			{ message: "Failed to delete user" },
 			{ status: 500 }
 		);
 	}

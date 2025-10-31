@@ -30,25 +30,24 @@ export default function AdminListingsPage() {
 	const [deleting, setDeleting] = useState<any>(null);
 	const [updating, setUpdating] = useState<any>(null);
 
-	useEffect(() => {
-		const fetchListings = async () => {
-			try {
-				if (!user) {
-					return;
-				}
-				const statusParam = filter !== "all" ? `&status=${filter}` : "";
-				const response = await fetch(
-					`/api/admin/all-listings?adminId=${user?._id}${statusParam}`
-				);
-				const data = await response.json();
-				setListings(data);
-			} catch (error) {
-				console.error("Failed to fetch listings:", error);
-			} finally {
-				setLoading(false);
+	const fetchListings = async () => {
+		try {
+			if (!user) {
+				return;
 			}
-		};
-
+			const statusParam = filter !== "all" ? `&status=${filter}` : "";
+			const response = await fetch(
+				`/api/admin/all-listings?adminId=${user?._id}${statusParam}`
+			);
+			const data = await response.json();
+			setListings(data);
+		} catch (error) {
+			console.error("Failed to fetch listings:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
+	useEffect(() => {
 		fetchListings();
 	}, [filter, user]);
 
@@ -58,11 +57,13 @@ export default function AdminListingsPage() {
 
 		setDeleting(listingId);
 		try {
-			const userId = localStorage.getItem("userId");
+			if (!user) {
+				return;
+			}
 			const response = await fetch(`/api/listings/${listingId}`, {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ userId }),
+				body: JSON.stringify({ userId: user?._id }),
 			});
 
 			if (response.ok) {
@@ -88,8 +89,9 @@ export default function AdminListingsPage() {
 			});
 
 			if (response.ok) {
-				const updated = await response.json();
+				await response.json();
 				toast.success("Status updated");
+				await fetchListings();
 			} else {
 				alert("Failed to update status");
 			}
