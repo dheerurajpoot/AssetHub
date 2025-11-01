@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export default function VerifyOTPPage() {
+function VerifyOTPForm() {
 	const [code, setCode] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState("");
@@ -94,5 +94,24 @@ export default function VerifyOTPPage() {
 				</CardContent>
 			</Card>
 		</div>
+	);
+}
+
+export default function VerifyOtpPage() {
+	return (
+		<Suspense
+			fallback={
+				<div className='flex min-h-screen items-center justify-center bg-linear-to-br from-blue-950 via-blue-900 to-cyan-900'>
+					<Card className='w-full max-w-md border-blue-700 bg-slate-900/90'>
+						<CardContent className='p-8'>
+							<div className='text-white text-center'>
+								Loading...
+							</div>
+						</CardContent>
+					</Card>
+				</div>
+			}>
+			<VerifyOTPForm />
+		</Suspense>
 	);
 }
