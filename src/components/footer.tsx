@@ -9,10 +9,10 @@ export default function Footer() {
 					<div>
 						<div className='flex items-center gap-2 mb-4'>
 							<div className='w-8 h-8 rounded-lg bg-linear-to-br from-blue-500 to-cyan-500 flex items-center justify-center'>
-								<span className='text-white font-bold'>A</span>
+								<span className='text-white font-bold'>W</span>
 							</div>
 							<span className='text-lg font-bold text-white'>
-								AssetHub
+								WebDeelers
 							</span>
 						</div>
 						<p className='text-slate-400 text-sm'>
@@ -87,7 +87,7 @@ export default function Footer() {
 							</li>
 							<li>
 								<a
-									href='mailto:support@assethub.com'
+									href='mailto:support@webdeelers.com'
 									className='text-slate-400 hover:text-white text-sm'>
 									Email Support
 								</a>
@@ -100,7 +100,7 @@ export default function Footer() {
 				<div className='border-t border-slate-800 pt-8'>
 					<div className='flex flex-col md:flex-row justify-between items-center'>
 						<p className='text-slate-400 text-sm'>
-							© 2025 AssetHub. All rights reserved.
+							© 2025 WebDeelers. All rights reserved.
 						</p>
 						<p className='text-slate-400 text-sm mt-4 md:mt-0'>
 							Platform Fee: 5% on all successful transactions

@@ -15,6 +15,7 @@ import {
 	TrendingDown,
 	Verified,
 	Loader2,
+	Copy,
 } from "lucide-react";
 import axios from "axios";
 import { userContext } from "@/context/userContext";
@@ -495,9 +496,28 @@ export default function ListingDetail({
 											</Button>
 											<Button
 												variant='outline'
+												onClick={() => {
+													try {
+														navigator.clipboard.writeText(
+															window.location.href
+														);
+														toast.success(
+															"Link copied to clipboard"
+														);
+													} catch (error) {
+														console.error(
+															"Failed to copy link:",
+															error
+														);
+														toast.error(
+															"Failed to copy link"
+														);
+													}
+												}}
 												size='icon'
 												className='flex-1 cursor-pointer border-slate-600 text-slate-300 hover:text-gray-300 hover:bg-slate-700 bg-transparent'>
-												<Share2 size={20} /> Share
+												<Share2 size={20} />
+												Share
 											</Button>
 										</div>
 									</div>
@@ -529,10 +549,25 @@ export default function ListingDetail({
 															{bid.bidder?.name ||
 																"Anonymous"}
 														</p>
-														<p className='font-light text-white text-sm'>
+														<p className='font-light flex items-center gap-1 text-white text-sm'>
 															{bid.bidder
 																?.phone ||
 																"Unknown"}
+															<Copy
+																size={16}
+																className='cursor-pointer'
+																onClick={() => {
+																	navigator.clipboard.writeText(
+																		bid
+																			.bidder
+																			?.phone ||
+																			""
+																	);
+																	toast.success(
+																		"Phone number copied to clipboard"
+																	);
+																}}
+															/>
 														</p>
 														<p className='text-xs text-slate-400'>
 															{new Date(

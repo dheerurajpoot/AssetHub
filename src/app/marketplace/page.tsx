@@ -5,7 +5,14 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, TrendingUp } from "lucide-react";
+import {
+	Search,
+	TrendingUp,
+	Eye,
+	MapPin,
+	DollarSign,
+	Star,
+} from "lucide-react";
 import axios from "axios";
 
 const categories = [
@@ -117,27 +124,32 @@ export default function Marketplace() {
 
 					{/* Listings Grid */}
 					{loading ? (
-						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-							{[1, 2, 3, 4, 5, 6].map((i) => (
+						<div className='grid grid-cols-1 xl:grid-cols-4 gap-4 md:gap-6'>
+							{[...Array(12)].map((_, i) => (
 								<Card
 									key={i}
-									className='bg-slate-800 border-slate-700 animate-pulse'>
-									<div className='h-48 bg-slate-700' />
-									<CardContent className='p-6 space-y-3'>
-										<div className='h-4 bg-slate-700 rounded w-3/4' />
-										<div className='h-4 bg-slate-700 rounded w-1/2' />
+									className='bg-slate-800 border-slate-700 overflow-hidden'>
+									<CardContent className='p-0'>
+										<div className='w-full h-48 bg-slate-700 animate-pulse' />
+										<div className='p-4 space-y-3'>
+											<div className='h-4 w-3/4 bg-slate-700 rounded animate-pulse' />
+											<div className='h-3 w-1/2 bg-slate-700 rounded animate-pulse' />
+											<div className='h-6 w-1/3 bg-slate-700 rounded animate-pulse' />
+										</div>
 									</CardContent>
 								</Card>
 							))}
 						</div>
 					) : filteredListings.length > 0 ? (
-						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+						<div className='grid grid-cols-1 xl:grid-cols-4 gap-4 md:gap-6'>
 							{filteredListings.map((listing: any) => (
 								<Link
 									key={listing._id}
-									href={`/listing/${listing._id}`}>
-									<Card className='bg-slate-800 border-slate-700 hover:border-blue-500 cursor-pointer transition-all h-full hover:shadow-lg hover:shadow-blue-500/20'>
-										<div className='relative h-48 bg-linear-to-br from-slate-700 to-slate-900 flex items-center justify-center overflow-hidden'>
+									href={`/listing/${listing._id}`}
+									className='group'>
+									<Card className='bg-slate-800 border-slate-700 hover:border-blue-500 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20 overflow-hidden h-full flex flex-col cursor-pointer'>
+										{/* Image */}
+										<div className='relative w-full h-48 overflow-hidden bg-linear-to-br from-slate-700 to-slate-900'>
 											{listing.thumbnail ||
 											(listing.images &&
 												listing.images[0]) ? (
@@ -147,75 +159,138 @@ export default function Marketplace() {
 														listing.images[0]
 													}
 													alt={listing.title}
-													className='w-full h-full object-cover hover:scale-105 transition-transform duration-500'
+													className='w-full h-full object-cover group-hover:scale-110 transition-transform duration-500'
 												/>
 											) : (
-												<TrendingUp
-													size={48}
-													className='text-blue-500'
-												/>
+												<div className='w-full h-full flex items-center justify-center'>
+													<TrendingUp
+														size={40}
+														className='text-blue-500'
+													/>
+												</div>
 											)}
-											<div className='absolute inset-0 bg-linear-to-t from-black/50 to-transparent' />
-											{listing.category && (
-												<span className='absolute top-2 left-2 text-xs font-medium px-2 py-0.5 rounded-full bg-slate-900/70 text-slate-100 border border-slate-700 backdrop-blur'>
-													{listing.category}
+											{/* Status Badge */}
+											<div className='absolute top-2 right-2'>
+												<span
+													className={`${
+														listing.status ===
+														"sold"
+															? "bg-red-500/90 text-white"
+															: "bg-green-500/90 text-white"
+													} text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm shadow-lg`}>
+													{listing.status === "sold"
+														? "Sold"
+														: "Active"}
 												</span>
+											</div>
+											{/* Featured Badge */}
+											{listing.featured && (
+												<div className='absolute top-2 left-2'>
+													<span className='bg-linear-to-r from-yellow-500 to-orange-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm shadow-lg flex items-center gap-1'>
+														<Star
+															size={12}
+															fill='currentColor'
+														/>
+														Featured
+													</span>
+												</div>
 											)}
 										</div>
-										<CardContent className='p-6'>
-											<h3 className='font-bold text-white mb-2 line-clamp-2'>
-												{listing.title}
-											</h3>
-											<p className='text-sm text-slate-400 mb-4'>
-												{listing.category}
-											</p>
 
-											<div className='grid grid-cols-2 gap-2 mb-4'>
+										{/* Content */}
+										<CardContent className='p-4 flex-1 flex flex-col'>
+											{/* Title & Category */}
+											<div className='mb-3'>
+												<h3 className='text-white font-bold text-base mb-1 line-clamp-2 group-hover:text-blue-400 transition-colors'>
+													{listing.title}
+												</h3>
+												<div className='flex items-center gap-2 text-xs text-slate-400'>
+													<span className='px-2 py-0.5 bg-slate-700/50 rounded'>
+														{listing.category}
+													</span>
+												</div>
+											</div>
+
+											{/* Price */}
+											<div className='mb-3'>
+												<div className='flex items-baseline gap-1'>
+													<DollarSign
+														size={16}
+														className='text-blue-400'
+													/>
+													<span className='text-2xl font-bold text-white'>
+														{Number(
+															listing.price
+														).toLocaleString()}
+													</span>
+												</div>
+											</div>
+
+											{/* Metrics Grid */}
+											<div className='grid grid-cols-2 gap-2 mb-3 flex-1'>
 												{listing.metrics
 													?.monthlyRevenue && (
-													<div className='text-xs'>
-														<p className='text-slate-500'>
-															Monthly Revenue
+													<div className='bg-slate-700/30 rounded-lg p-2 border border-slate-600/50'>
+														<p className='text-[10px] text-slate-400 mb-0.5'>
+															Revenue
 														</p>
-														<p className='font-bold text-white'>
+														<p className='text-xs font-semibold text-green-400'>
 															$
-															{listing.metrics.monthlyRevenue.toLocaleString()}
+															{Number(
+																listing.metrics
+																	.monthlyRevenue
+															).toLocaleString()}
 														</p>
 													</div>
 												)}
-												{listing.metrics?.country && (
-													<div className='text-xs'>
-														<p className='text-slate-500'>
-															Country
+												{listing.metrics
+													?.monthlyTraffic && (
+													<div className='bg-slate-700/30 rounded-lg p-2 border border-slate-600/50'>
+														<p className='text-[10px] text-slate-400 mb-0.5'>
+															Traffic
 														</p>
-														<p className='font-bold text-white'>
-															{
+														<p className='text-xs font-semibold text-blue-400'>
+															{Number(
 																listing.metrics
-																	.country
-															}
+																	.monthlyTraffic
+															).toLocaleString()}
+														</p>
+													</div>
+												)}
+												{listing.metrics?.followers && (
+													<div className='bg-slate-700/30 rounded-lg p-2 border border-slate-600/50'>
+														<p className='text-[10px] text-slate-400 mb-0.5'>
+															Followers
+														</p>
+														<p className='text-xs font-semibold text-purple-400'>
+															{Number(
+																listing.metrics
+																	.followers
+															).toLocaleString()}
 														</p>
 													</div>
 												)}
 												{listing.metrics?.age && (
-													<div className='text-xs'>
-														<p className='text-slate-500'>
+													<div className='bg-slate-700/30 rounded-lg p-2 border border-slate-600/50'>
+														<p className='text-[10px] text-slate-400 mb-0.5'>
 															Age
 														</p>
-														<p className='font-bold text-white'>
-															{
+														<p className='text-xs font-semibold text-orange-400'>
+															{Number(
 																listing.metrics
 																	.age
-															}
+															)}{" "}
+															mo
 														</p>
 													</div>
 												)}
 												{listing.details
 													?.monetization && (
-													<div className='text-xs'>
-														<p className='text-slate-500'>
+													<div className='bg-slate-700/30 rounded-lg p-2 border border-slate-600/50'>
+														<p className='text-[10px] text-slate-400 mb-0.5'>
 															Monetization
 														</p>
-														<p className='font-bold text-white'>
+														<p className='text-xs font-semibold text-orange-400'>
 															{
 																listing.details
 																	.monetization
@@ -223,35 +298,26 @@ export default function Marketplace() {
 														</p>
 													</div>
 												)}
-												{listing.metrics?.followers && (
-													<div className='text-xs'>
-														<p className='text-slate-500'>
-															Followers
-														</p>
-														<p className='font-bold text-white'>
-															{listing.metrics.followers.toLocaleString()}
-														</p>
-													</div>
-												)}
 											</div>
 
-											<div className='flex justify-between items-center pt-4 border-t border-slate-700'>
-												<span className='text-2xl font-bold text-white'>
-													$
-													{listing.price.toLocaleString()}
-												</span>
-												<div className='flex items-center gap-1'>
-													<span className='text-sm text-slate-400'>
-														{listing.status ===
-														"active" ? (
-															<p className='text-green-400 font-bold'>
-																Active
-															</p>
-														) : (
-															<h2 className='text-red-500 text-2xl font-bold'>
-																Sold
-															</h2>
-														)}
+											{/* Bottom Info */}
+											<div className='flex items-center justify-between pt-3 border-t border-slate-700/50'>
+												{listing.metrics?.country && (
+													<div className='flex items-center gap-1 text-xs text-slate-400'>
+														<MapPin size={12} />
+														<span>
+															{
+																listing.metrics
+																	.country
+															}
+														</span>
+													</div>
+												)}
+												<div className='flex items-center gap-1 text-xs text-slate-400'>
+													<Eye size={12} />
+													<span>
+														{listing.views || 0}{" "}
+														views
 													</span>
 												</div>
 											</div>
@@ -261,11 +327,22 @@ export default function Marketplace() {
 							))}
 						</div>
 					) : (
-						<div className='text-center py-12'>
-							<p className='text-slate-400 text-lg'>
-								No listings found
-							</p>
-						</div>
+						<Card className='bg-slate-800 border-slate-700'>
+							<CardContent className='p-12 text-center'>
+								<TrendingUp
+									size={48}
+									className='mx-auto text-slate-600 mb-4'
+								/>
+								<h3 className='text-xl font-semibold text-white mb-2'>
+									No Listings Found
+								</h3>
+								<p className='text-slate-400'>
+									{searchTerm
+										? "Try adjusting your search terms."
+										: "No listings are available at the moment."}
+								</p>
+							</CardContent>
+						</Card>
 					)}
 
 					{/* Pagination */}

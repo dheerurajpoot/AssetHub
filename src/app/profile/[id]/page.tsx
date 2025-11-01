@@ -12,6 +12,7 @@ import {
 	TrendingUp,
 	ShoppingBag,
 	DollarSign,
+	Loader2,
 } from "lucide-react";
 
 export default function ProfilePage({
@@ -44,8 +45,8 @@ export default function ProfilePage({
 
 	if (loading) {
 		return (
-			<div className='min-h-screen bg-slate-950 flex items-center justify-center'>
-				<div className='text-slate-400'>Loading profile...</div>
+			<div className='flex items-center text-white justify-center min-h-screen'>
+				<Loader2 className='h-12 w-12 animate-spin' />
 			</div>
 		);
 	}

@@ -25,11 +25,11 @@ export default function Navbar() {
 					<Link href='/' className='flex items-center gap-2'>
 						<div className='w-8 h-8 rounded-lg bg-linear-to-br from-blue-500 to-cyan-500 flex items-center justify-center'>
 							<span className='text-white font-bold text-lg'>
-								A
+								W
 							</span>
 						</div>
-						<span className='text-xl font-bold text-white hidden sm:inline'>
-							AssetHub
+						<span className='text-xl font-bold text-white sm:inline'>
+							WebDeelers
 						</span>
 					</Link>
 
