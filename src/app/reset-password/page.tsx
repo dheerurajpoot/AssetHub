@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
 	const params = useSearchParams();
 	const email = params.get("email") || "";
 	const token = params.get("token") || "";
@@ -108,5 +108,21 @@ export default function ResetPasswordPage() {
 				</CardContent>
 			</Card>
 		</div>
+	);
+}
+
+export default function ResetPasswordPage() {
+	return (
+		<Suspense fallback={
+			<div className='flex min-h-screen items-center justify-center bg-linear-to-br from-blue-950 via-blue-900 to-cyan-900'>
+				<Card className='w-full max-w-md border-blue-700 bg-slate-900/90'>
+					<CardContent className='p-8'>
+						<div className='text-white text-center'>Loading...</div>
+					</CardContent>
+				</Card>
+			</div>
+		}>
+			<ResetPasswordForm />
+		</Suspense>
 	);
 }
