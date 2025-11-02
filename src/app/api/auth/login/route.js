@@ -18,7 +18,7 @@ export async function POST(request) {
 				{ status: 401 }
 			);
 		}
-		if (!user.verified) {
+		if (!user.isEmailVerified) {
 			return NextResponse.json(
 				{
 					success: false,

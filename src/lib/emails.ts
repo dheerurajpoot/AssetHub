@@ -25,7 +25,7 @@ export async function sendEmail({
 }) {
 	try {
 		await transporter.sendMail({
-			from: `"AssetHub" <${process.env.SMTP_FROM}>`,
+			from: `"WebDeelers" <${process.env.SMTP_FROM}>`,
 			to,
 			subject,
 			html,
