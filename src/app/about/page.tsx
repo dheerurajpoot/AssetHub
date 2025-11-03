@@ -3,14 +3,14 @@ import { Button } from "@/components/ui/button";
 
 export default function About() {
 	return (
-		<div className='min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900'>
+		<div className='min-h-screen bg-gray-50'>
 			{/* Header */}
-			<div className='border-b border-slate-700'>
+			<div className='border-b border-gray-200'>
 				<div className='max-w-7xl mx-auto px-4 md:px-8 py-6'>
 					<Link href='/'>
 						<Button
 							variant='ghost'
-							className='text-slate-300 hover:text-white'>
+							className='text-gray-700 hover:text-white'>
 							← Back to Home
 						</Button>
 					</Link>
@@ -19,13 +19,13 @@ export default function About() {
 
 			{/* Content */}
 			<div className='max-w-4xl mx-auto px-4 md:px-8 py-16'>
-				<h1 className='text-4xl md:text-5xl font-bold text-white mb-6'>
+				<h1 className='text-4xl md:text-5xl font-bold text-gray-900 mb-6'>
 					About WebDeelers
 				</h1>
 
-				<div className='space-y-8 text-slate-300'>
+				<div className='space-y-8 text-slate-600'>
 					<section>
-						<h2 className='text-2xl font-bold text-white mb-4'>
+						<h2 className='text-2xl font-bold text-gray-900 mb-4'>
 							Our Mission
 						</h2>
 						<p className='leading-relaxed'>
@@ -37,7 +37,7 @@ export default function About() {
 					</section>
 
 					<section>
-						<h2 className='text-2xl font-bold text-white mb-4'>
+						<h2 className='text-2xl font-bold text-gray-900 mb-4'>
 							Why Choose WebDeelers?
 						</h2>
 						<ul className='space-y-3'>
@@ -83,7 +83,7 @@ export default function About() {
 					</section>
 
 					<section>
-						<h2 className='text-2xl font-bold text-white mb-4'>
+						<h2 className='text-2xl font-bold text-gray-900 mb-4'>
 							What We Offer
 						</h2>
 						<p className='leading-relaxed mb-4'>
@@ -101,7 +101,7 @@ export default function About() {
 							].map((item) => (
 								<div
 									key={item}
-									className='p-4 bg-slate-800 rounded-lg border border-slate-700'>
+									className='p-4 bg-white rounded-lg border border-gray-200'>
 									{item}
 								</div>
 							))}
@@ -109,7 +109,7 @@ export default function About() {
 					</section>
 
 					<section>
-						<h2 className='text-2xl font-bold text-white mb-4'>
+						<h2 className='text-2xl font-bold text-gray-900 mb-4'>
 							Our Commitment
 						</h2>
 						<p className='leading-relaxed'>

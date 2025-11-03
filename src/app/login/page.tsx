@@ -67,9 +67,9 @@ export default function Login() {
 	};
 
 	return (
-		<div className='min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 pb-24 md:pb-0'>
+		<div className='min-h-screen bg-gray-50 flex items-center justify-center p-4 pb-24 md:pb-0'>
 			<div className='w-full max-w-md'>
-				<Card className='bg-slate-800 border-slate-700'>
+				<Card className='bg-white border-gray-200 shadow-lg'>
 					<CardHeader className='text-center'>
 						<div className='flex justify-center mb-4'>
 							<div className='w-12 h-12 rounded-lg bg-linear-to-br from-blue-500 to-cyan-500 flex items-center justify-center'>
@@ -78,10 +78,10 @@ export default function Login() {
 								</span>
 							</div>
 						</div>
-						<CardTitle className='text-white text-2xl'>
+						<CardTitle className='text-gray-900 text-2xl'>
 							Welcome Back
 						</CardTitle>
-						<p className='text-slate-400 text-sm mt-2'>
+						<p className='text-gray-600 text-sm mt-2'>
 							Login to your AssetHub account
 						</p>
 					</CardHeader>
@@ -97,13 +97,13 @@ export default function Login() {
 							<div>
 								<Label
 									htmlFor='email'
-									className='text-slate-300'>
+									className='text-gray-700'>
 									Email Address
 								</Label>
 								<div className='relative mt-2'>
 									<Mail
 										size={18}
-										className='absolute left-3 top-3 text-slate-500'
+										className='absolute left-3 top-3 text-gray-400'
 									/>
 									<Input
 										id='email'
@@ -113,7 +113,7 @@ export default function Login() {
 										value={formData.email}
 										onChange={handleChange}
 										required
-										className='pl-10 bg-slate-700 border-slate-600 text-white placeholder:text-slate-500'
+										className='pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'
 									/>
 								</div>
 							</div>
@@ -121,13 +121,13 @@ export default function Login() {
 							<div>
 								<Label
 									htmlFor='password'
-									className='text-slate-300'>
+									className='text-gray-700'>
 									Password
 								</Label>
 								<div className='relative mt-2'>
 									<Lock
 										size={18}
-										className='absolute left-3 top-3 text-slate-500'
+										className='absolute left-3 top-3 text-gray-400'
 									/>
 									<Input
 										id='password'
@@ -137,7 +137,7 @@ export default function Login() {
 										value={formData.password}
 										onChange={handleChange}
 										required
-										className='pl-10 bg-slate-700 border-slate-600 text-white placeholder:text-slate-500'
+										className='pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'
 									/>
 								</div>
 							</div>
@@ -158,8 +158,8 @@ export default function Login() {
 							</p>
 						</form>
 
-						<div className='mt-6 pt-6 border-t border-slate-700'>
-							<p className='text-slate-400 text-sm text-center'>
+						<div className='mt-6 pt-6 border-t border-gray-200'>
+							<p className='text-gray-600 text-sm text-center'>
 								Don't have an account?{" "}
 								<Link
 									href='/signup'

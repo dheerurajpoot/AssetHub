@@ -108,7 +108,7 @@ export default function ListingDetail({
 
 	if (loading) {
 		return (
-			<div className='flex items-center text-white justify-center min-h-screen'>
+			<div className='flex items-center text-gray-900 justify-center min-h-screen bg-gray-50'>
 				<Loader2 className='h-12 w-12 animate-spin' />
 			</div>
 		);
@@ -116,21 +116,21 @@ export default function ListingDetail({
 
 	if (!listing) {
 		return (
-			<div className='flex items-center text-white justify-center min-h-screen'>
+			<div className='flex items-center text-gray-900 justify-center min-h-screen bg-gray-50'>
 				Listing not found
 			</div>
 		);
 	}
 
 	return (
-		<div className='min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-8 pb-24 md:pb-8'>
+		<div className='min-h-screen bg-gray-50 p-4 md:p-8 pb-24 md:pb-8'>
 			<div className='max-w-6xl mx-auto'>
 				{/* Header */}
 				<div className='mb-8'>
 					<Button
 						variant='ghost'
 						onClick={() => router.back()}
-						className='text-slate-300 hover:text-white mb-4'>
+						className='text-gray-700 hover:text-gray-900 mb-4'>
 						← Back
 					</Button>
 				</div>
@@ -139,8 +139,8 @@ export default function ListingDetail({
 					{/* Main Content */}
 					<div className='lg:col-span-2'>
 						{/* Hero Image / Thumbnail */}
-						<Card className='bg-slate-800 border-slate-700 mb-6 overflow-hidden'>
-							<div className='relative w-full h-112 bg-linear-to-br from-slate-700 to-slate-900 flex items-center justify-center'>
+						<Card className='bg-white border-gray-200 mb-6 overflow-hidden shadow-sm'>
+							<div className='relative w-full h-112 bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center'>
 								{listing?.thumbnail ? (
 									<img
 										src={listing.thumbnail}
@@ -160,13 +160,13 @@ export default function ListingDetail({
 											size={48}
 											className='text-blue-500 mx-auto mb-2'
 										/>
-										<p className='text-slate-400'>
+										<p className='text-gray-600'>
 											Asset Preview
 										</p>
 									</div>
 								)}
 								{listing?.category && (
-									<span className='absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-slate-900/70 text-slate-100 border border-slate-700 backdrop-blur'>
+									<span className='absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-gray-900 border border-gray-300 backdrop-blur shadow-sm'>
 										{listing.category}
 									</span>
 								)}
@@ -174,79 +174,79 @@ export default function ListingDetail({
 						</Card>
 
 						{/* Details */}
-						<Card className='bg-slate-800 border-slate-700'>
+						<Card className='bg-white border-gray-200 shadow-sm'>
 							<CardHeader>
-								<CardTitle className='text-white text-2xl'>
+								<CardTitle className='text-gray-900 text-2xl'>
 									{listing?.title}
 								</CardTitle>
 							</CardHeader>
 							<CardContent className='space-y-6'>
-								<p className='text-slate-400'>
+								<p className='text-gray-600'>
 									{listing.description}
 								</p>
 
 								{/* Metrics Grid */}
 								<div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
 									{listing.metrics?.assetLink && (
-										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-											<p className='text-xs text-slate-400 mb-1'>
+										<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+											<p className='text-xs text-gray-600 mb-1'>
 												Link/URL
 											</p>
 											<Link
 												href={listing.metrics.assetLink}
 												target='_blank'
-												className='text-sm font-semibold text-white text-wrap'>
+												className='text-sm font-semibold text-blue-600 text-wrap hover:text-blue-700'>
 												{listing.metrics.assetLink}
 											</Link>
 										</div>
 									)}
 									{listing.metrics?.country && (
-										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-											<p className='text-xs text-slate-400 mb-1'>
+										<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+											<p className='text-xs text-gray-600 mb-1'>
 												Country
 											</p>
-											<p className='text-xl font-bold text-white'>
+											<p className='text-xl font-bold text-gray-900'>
 												{listing.metrics.country}
 											</p>
 										</div>
 									)}
 									{listing.metrics?.monthlyRevenue && (
-										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-											<p className='text-xs text-slate-400 mb-1'>
+										<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+											<p className='text-xs text-gray-600 mb-1'>
 												Monthly Revenue
 											</p>
-											<p className='text-xl font-bold text-white'>
+											<p className='text-xl font-bold text-gray-900'>
 												$
 												{listing.metrics.monthlyRevenue.toLocaleString()}
 											</p>
 										</div>
 									)}
 									{listing.metrics?.monthlyTraffic && (
-										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-											<p className='text-xs text-slate-400 mb-1'>
+										<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+											<p className='text-xs text-gray-600 mb-1'>
 												Monthly Traffic
 											</p>
-											<p className='text-xl font-bold text-white'>
+											<p className='text-xl font-bold text-gray-900'>
 												{listing.metrics.monthlyTraffic.toLocaleString()}
 											</p>
 										</div>
 									)}
 									{listing.metrics?.followers && (
-										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-											<p className='text-xs text-slate-400 mb-1'>
+										<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+											<p className='text-xs text-gray-600 mb-1'>
 												Followers
 											</p>
-											<p className='text-xl font-bold text-white'>
+											<p className='text-xl font-bold text-gray-900'>
 												{listing.metrics.followers.toLocaleString()}
 											</p>
 										</div>
 									)}
 									{listing.metrics?.age && (
-										<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-											<p className='text-xs text-slate-400 mb-1'>
+										<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+											<p className='text-xs text-gray-600 mb-1'>
 												Age
 											</p>
-											<p className='text-xl font-bold text-white'>
+											<p className='text-xl font-bold text-gray-900'>
 												{listing.metrics.age} months
 											</p>
 										</div>
@@ -255,24 +255,24 @@ export default function ListingDetail({
 
 								{/* Details */}
 								{listing.details && (
-									<div className='space-y-3 pt-4 border-t border-slate-700'>
+									<div className='space-y-3 pt-4 border-t border-gray-200'>
 										<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
 											{listing.details.niche && (
-												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-													<p className='text-xs text-slate-400'>
+												<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+													<p className='text-xs text-gray-600'>
 														Niche
 													</p>
-													<p className='text-white font-semibold'>
+													<p className='text-gray-900 font-semibold'>
 														{listing.details.niche}
 													</p>
 												</div>
 											)}
 											{listing.details.monetization && (
-												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-													<p className='text-xs text-slate-400'>
+												<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+													<p className='text-xs text-gray-600'>
 														Monetization
 													</p>
-													<p className='text-white font-semibold'>
+													<p className='text-gray-900 font-semibold'>
 														{
 															listing.details
 																.monetization
@@ -281,11 +281,11 @@ export default function ListingDetail({
 												</div>
 											)}
 											{listing.details.trafficSource && (
-												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-													<p className='text-xs text-slate-400'>
+												<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+													<p className='text-xs text-gray-600'>
 														Traffic Source/Reach
 													</p>
-													<p className='text-white font-semibold'>
+													<p className='text-gray-900 font-semibold'>
 														{
 															listing.details
 																.trafficSource
@@ -295,11 +295,11 @@ export default function ListingDetail({
 											)}
 											{listing.details
 												.growthPotential && (
-												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-													<p className='text-xs text-slate-400'>
+												<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+													<p className='text-xs text-gray-600'>
 														Growth Potential
 													</p>
-													<p className='text-white font-semibold'>
+													<p className='text-gray-900 font-semibold'>
 														{
 															listing.details
 																.growthPotential
@@ -309,11 +309,11 @@ export default function ListingDetail({
 											)}
 											{listing.details
 												.paymentReceived && (
-												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-													<p className='text-xs text-slate-400'>
+												<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+													<p className='text-xs text-gray-600'>
 														Payment Received
 													</p>
-													<p className='text-white font-semibold'>
+													<p className='text-gray-900 font-semibold'>
 														{
 															listing.details
 																.paymentReceived
@@ -322,11 +322,11 @@ export default function ListingDetail({
 												</div>
 											)}
 											{listing.details.adManager && (
-												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-													<p className='text-xs text-slate-400'>
+												<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+													<p className='text-xs text-gray-600'>
 														Ad Manager Used
 													</p>
-													<p className='text-white font-semibold'>
+													<p className='text-gray-900 font-semibold'>
 														{
 															listing.details
 																.adManager
@@ -335,11 +335,11 @@ export default function ListingDetail({
 												</div>
 											)}
 											{listing.details.domainProvider && (
-												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-													<p className='text-xs text-slate-400'>
+												<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+													<p className='text-xs text-gray-600'>
 														Domain Provider
 													</p>
-													<p className='text-white font-semibold'>
+													<p className='text-gray-900 font-semibold'>
 														{
 															listing.details
 																.domainProvider
@@ -348,11 +348,11 @@ export default function ListingDetail({
 												</div>
 											)}
 											{listing.details.domainExpiry && (
-												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-													<p className='text-xs text-slate-400'>
+												<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+													<p className='text-xs text-gray-600'>
 														Domain Expiry
 													</p>
-													<p className='text-white font-semibold'>
+													<p className='text-gray-900 font-semibold'>
 														{
 															listing.details
 																.domainExpiry
@@ -361,11 +361,11 @@ export default function ListingDetail({
 												</div>
 											)}
 											{listing.details.platform && (
-												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-													<p className='text-xs text-slate-400'>
+												<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+													<p className='text-xs text-gray-600'>
 														Platform
 													</p>
-													<p className='text-white font-semibold'>
+													<p className='text-gray-900 font-semibold'>
 														{
 															listing.details
 																.platform
@@ -374,11 +374,11 @@ export default function ListingDetail({
 												</div>
 											)}
 											{listing.details.issue && (
-												<div className='p-4 bg-slate-700/70 rounded-lg border border-slate-600 backdrop-blur'>
-													<p className='text-xs text-slate-400'>
+												<div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+													<p className='text-xs text-gray-600'>
 														Any Issues
 													</p>
-													<p className='text-white font-semibold'>
+													<p className='text-gray-900 font-semibold'>
 														{listing.details.issue}
 													</p>
 												</div>
@@ -391,9 +391,9 @@ export default function ListingDetail({
 
 						{/* Image Gallery - Masonry */}
 						{listing?.images && listing.images.length > 0 && (
-							<Card className='bg-slate-800 border-slate-700 mt-6'>
+							<Card className='bg-white border-gray-200 mt-6 shadow-sm'>
 								<CardHeader>
-									<CardTitle className='text-white'>
+									<CardTitle className='text-gray-900'>
 										Gallery
 									</CardTitle>
 								</CardHeader>
@@ -409,7 +409,7 @@ export default function ListingDetail({
 												<div
 													key={idx}
 													className='mb-4 break-inside-avoid'>
-													<div className='overflow-hidden rounded-lg border border-slate-700 bg-slate-900/40'>
+													<div className='overflow-hidden rounded-lg border border-gray-200 bg-gray-50'>
 														<img
 															src={img}
 															onClick={(e) => {
@@ -442,7 +442,7 @@ export default function ListingDetail({
 									e.stopPropagation();
 									setPreviewUrl(null);
 								}}
-								className='absolute top-4 right-4 text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-3 py-1 text-sm'>
+								className='absolute top-4 right-4 text-gray-900 bg-white/90 hover:bg-white border border-gray-300 rounded-full px-3 py-1 text-sm shadow-lg'>
 								Close
 							</button>
 							<img
@@ -456,9 +456,9 @@ export default function ListingDetail({
 					{/* Sidebar */}
 					<div className='space-y-6'>
 						{/* Price Card */}
-						<Card className='bg-linear-to-br from-blue-900 to-cyan-900 border-blue-700'>
+						<Card className='bg-linear-to-br from-blue-600 to-cyan-600 border-blue-500 shadow-lg'>
 							<CardContent className='p-6'>
-								<p className='text-slate-300 text-sm mb-2'>
+								<p className='text-white/90 text-sm mb-2'>
 									Asking Price
 								</p>
 								<p className='text-4xl font-bold text-white mb-6'>
@@ -490,7 +490,7 @@ export default function ListingDetail({
 														"917755089819"
 													)
 												}
-												className='flex-1 cursor-pointer border-slate-600 text-slate-500 hover:text-gray-300 hover:bg-slate-700'>
+												className='flex-1 cursor-pointer border-white/30 text-shadow-gray-600 hover:bg-white/20'>
 												<MessageCircle size={20} />
 												Admin
 											</Button>
@@ -515,7 +515,7 @@ export default function ListingDetail({
 													}
 												}}
 												size='icon'
-												className='flex-1 cursor-pointer border-slate-600 text-slate-300 hover:text-gray-300 hover:bg-slate-700 bg-transparent'>
+												className='flex-1 cursor-pointer border-white/30 text-gray-600 hover:bg-white/20'>
 												<Share2 size={20} />
 												Share
 											</Button>
@@ -527,9 +527,9 @@ export default function ListingDetail({
 
 						{/* recent bids  */}
 						{listing.bids.length > 0 && (
-							<Card className='bg-slate-800 border-slate-700'>
+							<Card className='bg-white border-gray-200 shadow-sm'>
 								<CardHeader>
-									<CardTitle className='text-white text-lg flex items-center gap-2'>
+									<CardTitle className='text-gray-900 text-lg flex items-center gap-2'>
 										<TrendingDown
 											size={20}
 											className='text-cyan-500'
@@ -542,14 +542,14 @@ export default function ListingDetail({
 										{listing.bids.map((bid: any) => (
 											<div
 												key={bid._id}
-												className='p-3 bg-slate-700 rounded-lg border border-slate-600 hover:border-cyan-500 transition-colors'>
+												className='p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-500 transition-colors'>
 												<div className='flex items-start justify-between mb-2'>
 													<div className='flex-1'>
-														<p className='font-semibold text-white text-sm'>
+														<p className='font-semibold text-gray-900 text-sm'>
 															{bid.bidder?.name ||
 																"Anonymous"}
 														</p>
-														<p className='font-light flex items-center gap-1 text-white text-sm'>
+														<p className='font-light flex items-center gap-1 text-gray-900 text-sm'>
 															{bid.bidder
 																?.phone ||
 																"Unknown"}
@@ -569,7 +569,7 @@ export default function ListingDetail({
 																}}
 															/>
 														</p>
-														<p className='text-xs text-slate-400'>
+														<p className='text-xs text-gray-600'>
 															{new Date(
 																bid.createdAt
 															).toLocaleDateString()}{" "}
@@ -589,7 +589,7 @@ export default function ListingDetail({
 															$
 															{bid.amount.toLocaleString()}
 														</p>
-														<p className='text-xs text-slate-400'>
+														<p className='text-xs text-gray-600'>
 															{bid.amount >
 															listing.price
 																? `+$${(
@@ -601,7 +601,7 @@ export default function ListingDetail({
 													</div>
 												</div>
 												{bid.message && (
-													<p className='text-xs text-slate-300 italic border-t border-slate-600 pt-2 mt-2'>
+													<p className='text-xs text-gray-600 italic border-t border-gray-200 pt-2 mt-2'>
 														"{bid.message}"
 													</p>
 												)}
@@ -614,9 +614,9 @@ export default function ListingDetail({
 
 						{/* Bidding Card */}
 						{listing.allowBidding && (
-							<Card className='bg-slate-800 border-slate-700'>
+							<Card className='bg-white border-gray-200 shadow-sm'>
 								<CardHeader>
-									<CardTitle className='text-white'>
+									<CardTitle className='text-gray-900'>
 										Place a Bid
 									</CardTitle>
 								</CardHeader>
@@ -627,7 +627,7 @@ export default function ListingDetail({
 										<div>
 											<Label
 												htmlFor='bidAmount'
-												className='text-slate-300'>
+												className='text-gray-700'>
 												Bid Amount (USD)
 											</Label>
 											<Input
@@ -638,10 +638,10 @@ export default function ListingDetail({
 												onChange={(e) =>
 													setBidAmount(e.target.value)
 												}
-												className='mt-2 bg-slate-700 border-slate-600 text-white'
+												className='mt-2 bg-white border-gray-300 text-gray-900'
 												required
 											/>
-											<p className='text-xs text-slate-400 mt-1'>
+											<p className='text-xs text-gray-600 mt-1'>
 												Minimum: $
 												{listing.minBidAmount.toLocaleString()}
 											</p>
@@ -650,7 +650,7 @@ export default function ListingDetail({
 										<div>
 											<Label
 												htmlFor='bidMessage'
-												className='text-slate-300'>
+												className='text-gray-700'>
 												Message (Optional)
 											</Label>
 											<textarea
@@ -662,7 +662,7 @@ export default function ListingDetail({
 													)
 												}
 												placeholder="Tell the seller why you're interested..."
-												className='mt-2 w-full p-2 bg-slate-700 border border-slate-600 text-white rounded-md text-sm placeholder:text-slate-500'
+												className='mt-2 w-full p-2 bg-white border border-gray-300 text-gray-900 rounded-md text-sm placeholder:text-gray-400'
 												rows={3}
 											/>
 										</div>
@@ -673,7 +673,7 @@ export default function ListingDetail({
 												listing.status === "sold" ||
 												submittingBid
 											}
-											className='w-full bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white cursor-pointer'>
+											className='w-full bg-linear-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white cursor-pointer'>
 											{submittingBid
 												? "Placing Bid..."
 												: `${
@@ -689,9 +689,9 @@ export default function ListingDetail({
 						)}
 
 						{/* Seller Info */}
-						<Card className='bg-slate-800 border-slate-700'>
+						<Card className='bg-white border-gray-200 shadow-sm'>
 							<CardHeader>
-								<CardTitle className='text-white'>
+								<CardTitle className='text-gray-900'>
 									Seller Information
 								</CardTitle>
 							</CardHeader>
@@ -707,7 +707,7 @@ export default function ListingDetail({
 										alt='Profile'
 									/>
 									<div>
-										<p className='font-semibold flex gap-1 text-white'>
+										<p className='font-semibold flex gap-1 text-gray-900'>
 											{listing.seller?.name}{" "}
 											{listing.seller?.verified ? (
 												<Verified
@@ -719,7 +719,7 @@ export default function ListingDetail({
 											)}
 											{listing.seller?.role ===
 												"admin" && (
-												<span className='text-xs mt-2 italic text-green-300 font-light'>
+												<span className='text-xs mt-2 italic text-blue-600 font-light'>
 													(Admin)
 												</span>
 											)}
@@ -730,7 +730,7 @@ export default function ListingDetail({
 												className='text-yellow-500'
 												fill='currentColor'
 											/>
-											<span className='text-sm text-slate-400'>
+											<span className='text-sm text-gray-600'>
 												{listing.seller?.rating || 0}{" "}
 												rating
 											</span>
@@ -738,20 +738,20 @@ export default function ListingDetail({
 									</div>
 								</div>
 
-								<div className='grid grid-cols-2 gap-3 pt-4 border-t border-slate-700'>
+								<div className='grid grid-cols-2 gap-3 pt-4 border-t border-gray-200'>
 									<div>
-										<p className='text-xs text-slate-400'>
+										<p className='text-xs text-gray-600'>
 											Sales
 										</p>
-										<p className='font-bold text-white'>
+										<p className='font-bold text-gray-900'>
 											{listing.seller?.totalSales || 0}
 										</p>
 									</div>
 									<div>
-										<p className='text-xs text-slate-400'>
+										<p className='text-xs text-gray-600'>
 											Listings
 										</p>
-										<p className='font-bold text-white'>
+										<p className='font-bold text-gray-900'>
 											{listing.seller?.listings.length ||
 												0}
 										</p>
@@ -760,7 +760,7 @@ export default function ListingDetail({
 								<Link href={`/profile/${listing.seller?._id}`}>
 									<Button
 										variant='outline'
-										className='w-full border-slate-600 text-slate-300 hover:text-gray-300 hover:bg-slate-700 bg-transparent cursor-pointer'>
+										className='w-full border-gray-300 text-gray-700 hover:bg-gray-100 cursor-pointer'>
 										View Profile
 									</Button>
 								</Link>
@@ -768,23 +768,23 @@ export default function ListingDetail({
 						</Card>
 
 						{/* Stats */}
-						<Card className='bg-slate-800 border-slate-700'>
+						<Card className='bg-white border-gray-200 shadow-sm'>
 							<CardContent className='p-6 space-y-3'>
 								<div className='flex items-center justify-between'>
-									<span className='text-slate-400 flex items-center gap-2'>
+									<span className='text-gray-600 flex items-center gap-2'>
 										<TrendingUp size={16} />
 										Views
 									</span>
-									<span className='font-bold text-white'>
+									<span className='font-bold text-gray-900'>
 										{listing.views}
 									</span>
 								</div>
 								<div className='flex items-center justify-between'>
-									<span className='text-slate-400 flex items-center gap-2'>
+									<span className='text-gray-600 flex items-center gap-2'>
 										<Calendar size={16} />
 										Listed
 									</span>
-									<span className='font-bold text-white'>
+									<span className='font-bold text-gray-900'>
 										{new Date(
 											listing.createdAt
 										).toLocaleDateString()}

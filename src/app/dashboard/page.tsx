@@ -117,7 +117,7 @@ export default function Dashboard() {
 			case "rejected":
 				return "bg-red-500/20 text-red-400 border-red-500/30";
 			default:
-				return "bg-slate-500/20 text-slate-400 border-slate-500/30";
+				return "bg-gray-100 text-gray-600 border-gray-300";
 		}
 	};
 
@@ -156,15 +156,15 @@ export default function Dashboard() {
 			: listings.filter((l: any) => l.status === statusFilter);
 
 	return (
-		<div className='min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-8 pb-24 md:pb-8'>
+		<div className='min-h-screen bg-gray-50 p-4 md:p-8 pb-24 md:pb-8'>
 			<div className='max-w-7xl mx-auto'>
 				{/* Header */}
 				<div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8'>
 					<div>
-						<h1 className='text-3xl md:text-4xl font-bold text-white mb-2'>
+						<h1 className='text-3xl md:text-4xl font-bold text-gray-900 mb-2'>
 							Welcome back, {user?.name}
 						</h1>
-						<p className='text-slate-400'>
+						<p className='text-gray-600'>
 							Manage your digital assets and track your sales
 						</p>
 					</div>
@@ -183,14 +183,14 @@ export default function Dashboard() {
 						return (
 							<Card
 								key={index}
-								className='bg-slate-800 border-slate-700 hover:border-slate-600 transition-colors'>
+								className='bg-white border-gray-200 shadow-sm hover:border-slate-600 transition-colors'>
 								<CardContent className='p-6'>
 									<div className='flex items-center justify-between'>
 										<div>
-											<p className='text-slate-400 text-sm mb-1'>
+											<p className='text-gray-600 text-sm mb-1'>
 												{stat.title}
 											</p>
-											<p className='text-2xl font-bold text-white'>
+											<p className='text-2xl font-bold text-gray-900'>
 												{stat.value}
 											</p>
 										</div>
@@ -198,7 +198,7 @@ export default function Dashboard() {
 											className={`${stat.color} p-3 rounded-lg`}>
 											<Icon
 												size={24}
-												className='text-white'
+												className='text-gray-900'
 											/>
 										</div>
 									</div>
@@ -212,11 +212,11 @@ export default function Dashboard() {
 				<div className='grid'>
 					{/* Listings */}
 					<div className='lg:col-span-2'>
-						<Card className='bg-slate-800 border-slate-700'>
+						<Card className='bg-white border-gray-200 shadow-sm'>
 							<CardHeader>
 								<div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4'>
 									<div>
-										<CardTitle className='text-white'>
+										<CardTitle className='text-gray-900'>
 											Your Listings
 										</CardTitle>
 										<CardDescription>
@@ -241,7 +241,7 @@ export default function Dashboard() {
 												className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
 													statusFilter === status
 														? "bg-blue-500 text-white"
-														: "bg-slate-700 text-slate-300 hover:bg-slate-600"
+														: "bg-gray-100 text-gray-700 hover:bg-gray-200"
 												}`}>
 												{status
 													.charAt(0)
@@ -258,7 +258,7 @@ export default function Dashboard() {
 										filteredListings.map((listing: any) => (
 											<div
 												key={listing._id}
-												className='p-4 bg-slate-700 rounded-lg hover:bg-slate-600 transition-colors border border-slate-600'>
+												className='p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200'>
 												<div className='flex flex-col md:flex-row md:items-start gap-4'>
 													{/* Thumbnail */}
 													{listing.thumbnail && (
@@ -276,12 +276,12 @@ export default function Dashboard() {
 													<div className='flex-1 min-w-0'>
 														<div className='flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-2'>
 															<div>
-																<h3 className='font-semibold text-white text-lg truncate text-wrap'>
+																<h3 className='font-semibold text-gray-900 text-lg truncate text-wrap'>
 																	{
 																		listing.title
 																	}
 																</h3>
-																<p className='text-sm text-slate-400'>
+																<p className='text-sm text-gray-600'>
 																	{
 																		listing.category
 																	}
@@ -303,29 +303,29 @@ export default function Dashboard() {
 														{/* Details Grid */}
 														<div className='grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm'>
 															<div>
-																<p className='text-slate-400'>
+																<p className='text-gray-600'>
 																	Price
 																</p>
-																<p className='font-bold text-white'>
+																<p className='font-bold text-gray-900'>
 																	$
 																	{listing.price.toLocaleString()}
 																</p>
 															</div>
 															<div>
-																<p className='text-slate-400'>
+																<p className='text-gray-600'>
 																	Views
 																</p>
-																<p className='font-bold text-white'>
+																<p className='font-bold text-gray-900'>
 																	{
 																		listing.views
 																	}
 																</p>
 															</div>
 															<div>
-																<p className='text-slate-400'>
+																<p className='text-gray-600'>
 																	Bids
 																</p>
-																<p className='font-bold text-white'>
+																<p className='font-bold text-gray-900'>
 																	{listing
 																		.bids
 																		?.length ||
@@ -333,10 +333,10 @@ export default function Dashboard() {
 																</p>
 															</div>
 															<div>
-																<p className='text-slate-400'>
+																<p className='text-gray-600'>
 																	Created
 																</p>
-																<p className='font-bold text-white'>
+																<p className='font-bold text-gray-900'>
 																	{new Date(
 																		listing.createdAt
 																	).toLocaleDateString()}
@@ -445,7 +445,7 @@ export default function Dashboard() {
 											</div>
 										))
 									) : (
-										<p className='text-slate-400 text-center py-8'>
+										<p className='text-gray-600 text-center py-8'>
 											No listings found. Create your first
 											one!
 										</p>
@@ -459,10 +459,10 @@ export default function Dashboard() {
 
 			{showPreview && selectedListing && (
 				<div className='fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50'>
-					<Card className='bg-slate-800 border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto'>
+					<Card className='bg-white border-gray-200 shadow-sm max-w-2xl w-full max-h-[90vh] overflow-y-auto'>
 						<CardHeader className='flex flex-row items-center justify-between'>
 							<div>
-								<CardTitle className='text-white'>
+								<CardTitle className='text-gray-900'>
 									{selectedListing.title}
 								</CardTitle>
 								<CardDescription>
@@ -471,7 +471,7 @@ export default function Dashboard() {
 							</div>
 							<button
 								onClick={() => setShowPreview(false)}
-								className='text-slate-400 hover:text-white text-2xl'>
+								className='text-gray-600 hover:text-white text-2xl'>
 								×
 							</button>
 						</CardHeader>
@@ -489,16 +489,16 @@ export default function Dashboard() {
 
 							<div className='grid grid-cols-2 gap-4'>
 								<div>
-									<p className='text-slate-400 text-sm'>
+									<p className='text-gray-600 text-sm'>
 										Price
 									</p>
-									<p className='text-xl font-bold text-white'>
+									<p className='text-xl font-bold text-gray-900'>
 										$
 										{selectedListing.price.toLocaleString()}
 									</p>
 								</div>
 								<div>
-									<p className='text-slate-400 text-sm'>
+									<p className='text-gray-600 text-sm'>
 										Status
 									</p>
 									<p
@@ -512,41 +512,41 @@ export default function Dashboard() {
 									</p>
 								</div>
 								<div>
-									<p className='text-slate-400 text-sm'>
+									<p className='text-gray-600 text-sm'>
 										Views
 									</p>
-									<p className='text-xl font-bold text-white'>
+									<p className='text-xl font-bold text-gray-900'>
 										{selectedListing.views}
 									</p>
 								</div>
 								<div>
-									<p className='text-slate-400 text-sm'>
+									<p className='text-gray-600 text-sm'>
 										Bids
 									</p>
-									<p className='text-xl font-bold text-white'>
+									<p className='text-xl font-bold text-gray-900'>
 										{selectedListing.bids?.length || 0}
 									</p>
 								</div>
 							</div>
 
 							<div>
-								<p className='text-slate-400 text-sm mb-2'>
+								<p className='text-gray-600 text-sm mb-2'>
 									Description
 								</p>
-								<p className='text-white'>
+								<p className='text-gray-900'>
 									{selectedListing.description}
 								</p>
 							</div>
 
 							{selectedListing.metrics && (
 								<div>
-									<p className='text-slate-400 text-sm mb-2'>
+									<p className='text-gray-600 text-sm mb-2'>
 										Metrics
 									</p>
 									<div className='grid grid-cols-2 gap-2 text-sm'>
 										{selectedListing.metrics
 											.monthlyRevenue && (
-											<p className='text-white'>
+											<p className='text-gray-900'>
 												Monthly Revenue:{" "}
 												<span className='font-bold'>
 													$
@@ -559,7 +559,7 @@ export default function Dashboard() {
 										)}
 										{selectedListing.metrics
 											.monthlyTraffic && (
-											<p className='text-white'>
+											<p className='text-gray-900'>
 												Monthly Traffic:{" "}
 												<span className='font-bold'>
 													{
@@ -570,7 +570,7 @@ export default function Dashboard() {
 											</p>
 										)}
 										{selectedListing.metrics.followers && (
-											<p className='text-white'>
+											<p className='text-gray-900'>
 												Followers:{" "}
 												<span className='font-bold'>
 													{
@@ -582,7 +582,7 @@ export default function Dashboard() {
 										)}
 										{selectedListing.metrics
 											.subscribers && (
-											<p className='text-white'>
+											<p className='text-gray-900'>
 												Subscribers:{" "}
 												<span className='font-bold'>
 													{

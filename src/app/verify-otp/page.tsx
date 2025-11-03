@@ -45,7 +45,7 @@ function VerifyOTPForm() {
 					<h2 className='text-2xl font-bold mb-4 text-white text-center'>
 						Verify Your AssetHub Account
 					</h2>
-					<p className='text-slate-300 text-center mb-7'>
+					<p className='text-gray-700 text-center mb-7'>
 						Enter the 6-digit code sent to your email{" "}
 						<b className='text-blue-400'>{email}</b>
 					</p>

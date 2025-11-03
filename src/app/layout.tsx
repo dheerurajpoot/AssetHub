@@ -100,11 +100,11 @@ export default function RootLayout({
 					name='viewport'
 					content='width=device-width, initial-scale=1'
 				/>
-				<meta name='theme-color' content='#0f172a' />
+				<meta name='theme-color' content='#f8fafc' />
 				<meta name='apple-mobile-web-app-capable' content='yes' />
 				<meta
 					name='apple-mobile-web-app-status-bar-style'
-					content='black-translucent'
+					content='default'
 				/>
 				{/* Structured Data - Organization */}
 				<script
@@ -194,7 +194,7 @@ export default function RootLayout({
 				/> */}
 			</head>
 			<body
-				className={`${geistSans.className} bg-slate-900`}
+				className={`${geistSans.className} bg-gray-50`}
 				suppressHydrationWarning>
 				<AuthProvider>
 					<Navbar />

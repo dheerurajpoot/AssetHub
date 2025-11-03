@@ -89,21 +89,21 @@ export default function SignUp() {
 	};
 
 	return (
-		<div className='min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 pb-24 md:pb-0'>
+		<div className='min-h-screen bg-gray-50 flex items-center justify-center p-4 pb-24 md:pb-0'>
 			<div className='w-full max-w-md'>
-				<Card className='bg-slate-800 border-slate-700'>
+				<Card className='bg-white border-gray-200 shadow-lg'>
 					<CardHeader className='text-center'>
 						<div className='flex justify-center mb-4'>
-							<div className='w-12 h-12 rounded-lg bg-linear-to-br from-blue-500 to-cyan-500 flex items-center justify-center'>
+							<div className='w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center'>
 								<span className='text-white font-bold text-xl'>
 									A
 								</span>
 							</div>
 						</div>
-						<CardTitle className='text-white text-2xl'>
+						<CardTitle className='text-gray-900 text-2xl'>
 							Create Account
 						</CardTitle>
-						<p className='text-slate-400 text-sm mt-2'>
+						<p className='text-gray-600 text-sm mt-2'>
 							Join AssetHub today
 						</p>
 					</CardHeader>
@@ -119,13 +119,13 @@ export default function SignUp() {
 							<div>
 								<Label
 									htmlFor='name'
-									className='text-slate-300'>
+									className='text-gray-700'>
 									Full Name
 								</Label>
 								<div className='relative mt-2'>
 									<User
 										size={18}
-										className='absolute left-3 top-3 text-slate-500'
+										className='absolute left-3 top-3 text-gray-400'
 									/>
 									<Input
 										id='name'
@@ -135,7 +135,7 @@ export default function SignUp() {
 										value={formData.name}
 										onChange={handleChange}
 										required
-										className='pl-10 bg-slate-700 border-slate-600 text-white placeholder:text-slate-500'
+										className='pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'
 									/>
 								</div>
 							</div>
@@ -143,13 +143,13 @@ export default function SignUp() {
 							<div>
 								<Label
 									htmlFor='email'
-									className='text-slate-300'>
+									className='text-gray-700'>
 									Email Address
 								</Label>
 								<div className='relative mt-2'>
 									<Mail
 										size={18}
-										className='absolute left-3 top-3 text-slate-500'
+										className='absolute left-3 top-3 text-gray-400'
 									/>
 									<Input
 										id='email'
@@ -159,7 +159,7 @@ export default function SignUp() {
 										value={formData.email}
 										onChange={handleChange}
 										required
-										className='pl-10 bg-slate-700 border-slate-600 text-white placeholder:text-slate-500'
+										className='pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'
 									/>
 								</div>
 							</div>
@@ -167,7 +167,7 @@ export default function SignUp() {
 							<div>
 								<Label
 									htmlFor='phone'
-									className='text-slate-300'>
+									className='text-gray-700'>
 									Phone Number
 								</Label>
 								<div className='relative mt-2'>
@@ -182,7 +182,7 @@ export default function SignUp() {
 										value={formData.phone}
 										onChange={handleChange}
 										required
-										className='pl-8 bg-slate-700 border-slate-600 text-white placeholder:text-slate-500'
+										className='pl-8 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'
 										minLength={10}
 										pattern='\+[0-9]{10,15}'
 									/>
@@ -192,13 +192,13 @@ export default function SignUp() {
 							<div>
 								<Label
 									htmlFor='password'
-									className='text-slate-300'>
+									className='text-gray-700'>
 									Password
 								</Label>
 								<div className='relative mt-2'>
 									<Lock
 										size={18}
-										className='absolute left-3 top-3 text-slate-500'
+										className='absolute left-3 top-3 text-gray-400'
 									/>
 									<Input
 										id='password'
@@ -208,7 +208,7 @@ export default function SignUp() {
 										value={formData.password}
 										onChange={handleChange}
 										required
-										className='pl-10 bg-slate-700 border-slate-600 text-white placeholder:text-slate-500'
+										className='pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'
 									/>
 								</div>
 							</div>
@@ -216,13 +216,13 @@ export default function SignUp() {
 							<div>
 								<Label
 									htmlFor='confirmPassword'
-									className='text-slate-300'>
+									className='text-gray-700'>
 									Confirm Password
 								</Label>
 								<div className='relative mt-2'>
 									<Lock
 										size={18}
-										className='absolute left-3 top-3 text-slate-500'
+										className='absolute left-3 top-3 text-gray-400'
 									/>
 									<Input
 										id='confirmPassword'
@@ -232,7 +232,7 @@ export default function SignUp() {
 										value={formData.confirmPassword}
 										onChange={handleChange}
 										required
-										className='pl-10 bg-slate-700 border-slate-600 text-white placeholder:text-slate-500'
+										className='pl-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'
 									/>
 								</div>
 							</div>
@@ -240,14 +240,14 @@ export default function SignUp() {
 							<Button
 								type='submit'
 								disabled={loading}
-								className='w-full bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white gap-2'>
+								className='w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white gap-2'>
 								{loading ? "Creating Account..." : "Sign Up"}
 								<ArrowRight size={18} />
 							</Button>
 						</form>
 
-						<div className='mt-6 pt-6 border-t border-slate-700'>
-							<p className='text-slate-400 text-sm text-center'>
+						<div className='mt-6 pt-6 border-t border-gray-200'>
+							<p className='text-gray-600 text-sm text-center'>
 								Already have an account?{" "}
 								<Link
 									href='/login'

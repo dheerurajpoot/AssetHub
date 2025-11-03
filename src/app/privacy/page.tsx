@@ -3,14 +3,14 @@ import { Button } from "@/components/ui/button";
 
 export default function Privacy() {
 	return (
-		<div className='min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900'>
+		<div className='min-h-screen bg-gray-50'>
 			{/* Header */}
-			<div className='border-b border-slate-700'>
+			<div className='border-b border-gray-200'>
 				<div className='max-w-7xl mx-auto px-4 md:px-8 py-6'>
 					<Link href='/'>
 						<Button
 							variant='ghost'
-							className='text-slate-300 hover:text-white'>
+							className='text-gray-700 hover:text-white'>
 							← Back to Home
 						</Button>
 					</Link>
@@ -19,16 +19,14 @@ export default function Privacy() {
 
 			{/* Content */}
 			<div className='max-w-4xl mx-auto px-4 md:px-8 py-16'>
-				<h1 className='text-4xl md:text-5xl font-bold text-white mb-6'>
+				<h1 className='text-4xl md:text-5xl font-bold text-gray-900 mb-6'>
 					Privacy Policy
 				</h1>
-				<p className='text-slate-400 mb-8'>
-					Last updated: October 2024
-				</p>
+				<p className='text-gray-600 mb-8'>Last updated: October 2024</p>
 
-				<div className='space-y-8 text-slate-300'>
+				<div className='space-y-8 text-slate-600'>
 					<section>
-						<h2 className='text-2xl font-bold text-white mb-4'>
+						<h2 className='text-2xl font-bold text-gray-900 mb-4'>
 							1. Information We Collect
 						</h2>
 						<p className='leading-relaxed'>
@@ -41,7 +39,7 @@ export default function Privacy() {
 					</section>
 
 					<section>
-						<h2 className='text-2xl font-bold text-white mb-4'>
+						<h2 className='text-2xl font-bold text-gray-900 mb-4'>
 							2. How We Use Your Information
 						</h2>
 						<p className='leading-relaxed'>
@@ -53,7 +51,7 @@ export default function Privacy() {
 					</section>
 
 					<section>
-						<h2 className='text-2xl font-bold text-white mb-4'>
+						<h2 className='text-2xl font-bold text-gray-900 mb-4'>
 							3. Data Security
 						</h2>
 						<p className='leading-relaxed'>
@@ -65,7 +63,7 @@ export default function Privacy() {
 					</section>
 
 					<section>
-						<h2 className='text-2xl font-bold text-white mb-4'>
+						<h2 className='text-2xl font-bold text-gray-900 mb-4'>
 							4. Sharing of Information
 						</h2>
 						<p className='leading-relaxed'>
@@ -77,7 +75,7 @@ export default function Privacy() {
 					</section>
 
 					<section>
-						<h2 className='text-2xl font-bold text-white mb-4'>
+						<h2 className='text-2xl font-bold text-gray-900 mb-4'>
 							5. Your Rights
 						</h2>
 						<p className='leading-relaxed'>
@@ -88,7 +86,7 @@ export default function Privacy() {
 					</section>
 
 					<section>
-						<h2 className='text-2xl font-bold text-white mb-4'>
+						<h2 className='text-2xl font-bold text-gray-900 mb-4'>
 							6. Contact Us
 						</h2>
 						<p className='leading-relaxed'>

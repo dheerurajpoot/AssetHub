@@ -45,7 +45,7 @@ export default function ProfilePage({
 
 	if (loading) {
 		return (
-			<div className='flex items-center text-white justify-center min-h-screen'>
+			<div className='flex items-center text-gray-900 justify-center min-h-screen bg-gray-50'>
 				<Loader2 className='h-12 w-12 animate-spin' />
 			</div>
 		);
@@ -53,13 +53,13 @@ export default function ProfilePage({
 
 	if (!user) {
 		return (
-			<div className='min-h-screen bg-slate-950 flex items-center justify-center'>
+			<div className='min-h-screen bg-gray-50 flex items-center justify-center'>
 				<div className='text-center'>
-					<h1 className='text-2xl font-bold text-white mb-4'>
+					<h1 className='text-2xl font-bold text-gray-900 mb-4'>
 						Profile Not Found
 					</h1>
 					<Link href='/marketplace'>
-						<Button className='bg-linear-to-br from-blue-500 to-cyan-500'>
+						<Button className='bg-linear-to-br from-blue-500 to-cyan-500 text-white'>
 							Back to Marketplace
 						</Button>
 					</Link>
@@ -69,10 +69,10 @@ export default function ProfilePage({
 	}
 
 	return (
-		<div className='min-h-screen bg-slate-950 py-8'>
+		<div className='min-h-screen bg-gray-50 py-8'>
 			<div className='max-w-6xl mx-auto px-4'>
 				{/* Profile Header */}
-				<Card className='bg-slate-900 border-slate-800 mb-8'>
+				<Card className='bg-white border-gray-200 mb-8 shadow-sm'>
 					<CardContent className='pt-8'>
 						<div className='flex flex-col md:flex-row gap-8 items-start md:items-center'>
 							{/* Avatar */}
@@ -86,14 +86,14 @@ export default function ProfilePage({
 							<div className='flex-1'>
 								<div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
 									<div>
-										<h1 className='text-3xl font-bold text-white mb-2'>
+										<h1 className='text-3xl font-bold text-gray-900 mb-2'>
 											{user.name}
 										</h1>
-										<p className='text-slate-400 mb-2'>
+										<p className='text-gray-600 mb-2'>
 											{user.email}
 										</p>
 										{user.bio && (
-											<p className='text-slate-300 mb-4'>
+											<p className='text-gray-700 mb-4'>
 												{user.bio}
 											</p>
 										)}
@@ -111,12 +111,12 @@ export default function ProfilePage({
 																user.rating
 															)
 																? "fill-yellow-400 text-yellow-400"
-																: "text-slate-600"
+																: "text-gray-400"
 														}
 													/>
 												))}
 											</div>
-											<span className='text-slate-400'>
+											<span className='text-gray-600'>
 												({user.rating.toFixed(1)})
 											</span>
 										</div>
@@ -171,14 +171,14 @@ export default function ProfilePage({
 
 				{/* Stats Grid */}
 				<div className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-8'>
-					<Card className='bg-slate-900 border-slate-800'>
+					<Card className='bg-white border-gray-200 shadow-sm'>
 						<CardContent className='pt-6'>
 							<div className='flex items-center justify-between'>
 								<div>
-									<p className='text-slate-400 text-sm mb-1'>
+									<p className='text-gray-600 text-sm mb-1'>
 										Total Listings
 									</p>
-									<p className='text-3xl font-bold text-white'>
+									<p className='text-3xl font-bold text-gray-900'>
 										{user.listings.length}
 									</p>
 								</div>
@@ -190,14 +190,14 @@ export default function ProfilePage({
 						</CardContent>
 					</Card>
 
-					<Card className='bg-slate-900 border-slate-800'>
+					<Card className='bg-white border-gray-200 shadow-sm'>
 						<CardContent className='pt-6'>
 							<div className='flex items-center justify-between'>
 								<div>
-									<p className='text-slate-400 text-sm mb-1'>
+									<p className='text-gray-600 text-sm mb-1'>
 										Sold
 									</p>
-									<p className='text-3xl font-bold text-white'>
+									<p className='text-3xl font-bold text-gray-900'>
 										{
 											listings.filter(
 												(l: any) => l.status === "sold"
@@ -213,14 +213,14 @@ export default function ProfilePage({
 						</CardContent>
 					</Card>
 
-					<Card className='bg-slate-900 border-slate-800'>
+					<Card className='bg-white border-gray-200 shadow-sm'>
 						<CardContent className='pt-6'>
 							<div className='flex items-center justify-between'>
 								<div>
-									<p className='text-slate-400 text-sm mb-1'>
+									<p className='text-gray-600 text-sm mb-1'>
 										Active
 									</p>
-									<p className='text-3xl font-bold text-white'>
+									<p className='text-3xl font-bold text-gray-900'>
 										{
 											listings.filter(
 												(l: any) =>
@@ -237,14 +237,14 @@ export default function ProfilePage({
 						</CardContent>
 					</Card>
 
-					<Card className='bg-slate-900 border-slate-800'>
+					<Card className='bg-white border-gray-200 shadow-sm'>
 						<CardContent className='pt-6'>
 							<div className='flex items-center justify-between'>
 								<div>
-									<p className='text-slate-400 text-sm mb-1'>
+									<p className='text-gray-600 text-sm mb-1'>
 										Total Sales
 									</p>
-									<p className='text-3xl font-bold text-white'>
+									<p className='text-3xl font-bold text-gray-900'>
 										${user.totalSales.toLocaleString()}
 									</p>
 								</div>
@@ -259,7 +259,7 @@ export default function ProfilePage({
 
 				{/* Listings Section */}
 				<div>
-					<h2 className='text-2xl font-bold text-white mb-6'>
+					<h2 className='text-2xl font-bold text-gray-900 mb-6'>
 						Active Listings 0
 					</h2>
 					{listings.length > 0 ? (
@@ -268,9 +268,9 @@ export default function ProfilePage({
 								<Link
 									key={listing._id}
 									href={`/listing/${listing._id}`}>
-									<Card className='bg-slate-900 border-slate-800 hover:border-cyan-500 transition-colors cursor-pointer h-full'>
+									<Card className='bg-white border-gray-200 hover:border-blue-500 transition-colors cursor-pointer h-full shadow-sm'>
 										{listing.thumbnail && (
-											<div className='w-full h-40 bg-slate-800 rounded-t-lg overflow-hidden'>
+											<div className='w-full h-40 bg-gray-100 rounded-t-lg overflow-hidden'>
 												<img
 													src={
 														listing.thumbnail ||
@@ -282,10 +282,10 @@ export default function ProfilePage({
 											</div>
 										)}
 										<CardContent className='pt-4'>
-											<h3 className='font-semibold text-white mb-2 line-clamp-2'>
+											<h3 className='font-semibold text-gray-900 mb-2 line-clamp-2'>
 												{listing.title}
 											</h3>
-											<p className='text-slate-400 text-sm mb-3'>
+											<p className='text-gray-600 text-sm mb-3'>
 												{listing.category}
 											</p>
 											<div className='flex justify-between items-center'>
@@ -303,9 +303,9 @@ export default function ProfilePage({
 							))}
 						</div>
 					) : (
-						<Card className='bg-slate-900 border-slate-800'>
+						<Card className='bg-white border-gray-200 shadow-sm'>
 							<CardContent className='pt-8 text-center'>
-								<p className='text-slate-400'>
+								<p className='text-gray-600'>
 									No active listings
 								</p>
 							</CardContent>

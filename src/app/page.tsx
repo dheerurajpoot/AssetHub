@@ -147,22 +147,22 @@ export default function Home() {
 	];
 
 	return (
-		<div className='min-h-screen'>
+		<div className='min-h-screen bg-gray-50'>
 			{/* Hero Section */}
 			<section className='max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24'>
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
 					<div>
-						<h1 className='text-4xl md:text-6xl font-bold text-white mb-6 leading-tight'>
+						<h1 className='text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight'>
 							Buy & Sell Digital Assets with Confidence
 						</h1>
-						<p className='text-xl text-slate-400 mb-8'>
+						<p className='text-xl text-gray-600 mb-8'>
 							WebDeelers is the trusted marketplace for digital
 							entrepreneurs. Discover, evaluate, and acquire
 							high-quality digital properties.
 						</p>
 						<div className='flex flex-col sm:flex-row gap-4'>
 							<Link href='/marketplace'>
-								<Button className='bg-linear-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-6 text-lg gap-2'>
+								<Button className='bg-linear-to-br cursor-pointer from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-6 text-lg gap-2'>
 									Browse Marketplace
 									<ArrowRight size={20} />
 								</Button>
@@ -170,7 +170,7 @@ export default function Home() {
 							<Link href='/guide'>
 								<Button
 									variant='outline'
-									className='border-slate-600 text-slate-300 hover:bg-slate-700 px-8 py-6 text-lg bg-transparent'>
+									className='border-gray-300 cursor-pointer text-gray-700 hover:bg-gray-100 px-8 py-6 text-lg'>
 									Learn More
 								</Button>
 							</Link>
@@ -179,13 +179,13 @@ export default function Home() {
 
 					{/* Hero Image */}
 					<div className='relative'>
-						<div className='absolute inset-0 bg-linear-to-br from-blue-500 to-cyan-500 rounded-2xl blur-3xl opacity-20' />
-						<div className='relative bg-linear-to-br from-slate-800 to-slate-900 rounded-2xl p-8 border border-slate-700'>
+						<div className='absolute inset-0 bg-linear-to-br from-gray-100 to-gray-200 rounded-2xl blur-3xl opacity-10' />
+						<div className='relative bg-linear-to-br from-white to-gray-50 rounded-2xl p-8 border border-gray-200 shadow-lg'>
 							<div className='space-y-4'>
 								{[1, 2, 3].map((i) => (
 									<div
 										key={i}
-										className='h-20 bg-slate-700 rounded-lg animate-pulse'
+										className='h-20 bg-gray-200 rounded-lg animate-pulse'
 									/>
 								))}
 							</div>
@@ -196,7 +196,7 @@ export default function Home() {
 
 			{/* Categories */}
 			<section className='max-w-7xl mx-auto px-4 md:px-8 py-16'>
-				<h2 className='text-3xl font-bold text-white mb-8'>
+				<h2 className='text-3xl font-bold text-gray-900 mb-8'>
 					Browse by Category
 				</h2>
 				<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4'>
@@ -206,13 +206,13 @@ export default function Home() {
 							<Link
 								key={cat.name}
 								href={`/marketplace?category=${cat.name}`}>
-								<Card className='bg-slate-800 border-slate-700 hover:border-blue-500 cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/20'>
+								<Card className='bg-white border-gray-200 hover:border-blue-500 cursor-pointer transition-all hover:shadow-lg hover:shadow-blue-500/10'>
 									<CardContent className='p-6 text-center'>
 										<Icon
 											size={32}
 											className='text-blue-500 mx-auto mb-3'
 										/>
-										<p className='text-white font-semibold text-sm'>
+										<p className='text-gray-900 font-semibold text-sm'>
 											{cat.name}
 										</p>
 									</CardContent>
@@ -226,10 +226,10 @@ export default function Home() {
 			{/* Featured Listings with Filters */}
 			<section className='max-w-7xl mx-auto px-4 md:px-8 py-16'>
 				<div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6'>
-					<h2 className='text-3xl font-bold text-white'>
+					<h2 className='text-3xl font-bold text-gray-900'>
 						Featured Listings
 						{listings.length > 0 && (
-							<span className='text-lg text-slate-400 font-normal ml-2'>
+							<span className='text-lg text-gray-600 font-normal ml-2'>
 								({listings.length})
 							</span>
 						)}
@@ -238,11 +238,11 @@ export default function Home() {
 						<Button
 							onClick={() => setShowFilters(!showFilters)}
 							variant='outline'
-							className='border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent gap-2'>
+							className='border-gray-300 cursor-pointer text-gray-700 hover:bg-gray-100 bg-transparent gap-2'>
 							<Filter size={18} />
 							Filters
 							{hasActiveFilters && (
-								<span className='ml-1 px-2 py-0.5 bg-blue-500 text-white text-xs rounded-full'>
+								<span className='ml-1 px-2 py-0.5 bg-blue-600 text-white text-xs rounded-full'>
 									{[
 										selectedCategory !== "All" ? 1 : 0,
 										selectedCountry !== "All" ? 1 : 0,
@@ -256,7 +256,7 @@ export default function Home() {
 							<Button
 								onClick={clearFilters}
 								variant='outline'
-								className='border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent gap-2'>
+								className='border-gray-300 cursor-pointer text-gray-700 hover:bg-gray-100 bg-transparent gap-2'>
 								<X size={18} />
 								Clear
 							</Button>
@@ -264,7 +264,7 @@ export default function Home() {
 						<Link href='/marketplace'>
 							<Button
 								variant='outline'
-								className='border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent'>
+								className='border-gray-300 text-gray-700 hover:bg-gray-100'>
 								View All
 							</Button>
 						</Link>
@@ -273,12 +273,12 @@ export default function Home() {
 
 				{/* Filters Panel */}
 				{showFilters && (
-					<Card className='bg-slate-800/50 border-slate-700 mb-8 backdrop-blur-sm'>
+					<Card className='bg-white border-gray-200 mb-8 shadow-sm'>
 						<CardContent className='p-6'>
 							<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
 								{/* Category Filter */}
 								<div>
-									<label className='text-sm font-semibold text-slate-300 mb-2 block'>
+									<label className='text-sm font-semibold text-gray-700 mb-2 block'>
 										Category
 									</label>
 									<select
@@ -286,7 +286,7 @@ export default function Home() {
 										onChange={(e) =>
 											setSelectedCategory(e.target.value)
 										}
-										className='w-full h-10 rounded-md border border-slate-600 bg-slate-700/50 text-white px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'>
+										className='w-full h-10 rounded-md border border-gray-300 bg-white text-gray-900 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'>
 										<option value='All'>
 											All Categories
 										</option>
@@ -302,7 +302,7 @@ export default function Home() {
 
 								{/* Country Filter */}
 								<div>
-									<label className='text-sm font-semibold text-slate-300 mb-2 block'>
+									<label className='text-sm font-semibold text-gray-700 mb-2 block'>
 										Country
 									</label>
 									<select
@@ -310,7 +310,7 @@ export default function Home() {
 										onChange={(e) =>
 											setSelectedCountry(e.target.value)
 										}
-										className='w-full h-10 rounded-md border border-slate-600 bg-slate-700/50 text-white px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'>
+										className='w-full h-10 rounded-md border border-gray-300 bg-white text-gray-900 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'>
 										<option value='All'>
 											All Countries
 										</option>
@@ -326,7 +326,7 @@ export default function Home() {
 
 								{/* Price Range Filter */}
 								<div>
-									<label className='text-sm font-semibold text-slate-300 mb-2 block'>
+									<label className='text-sm font-semibold text-gray-700 mb-2 block'>
 										Price Range
 									</label>
 									<div className='flex gap-2'>
@@ -340,7 +340,7 @@ export default function Home() {
 													min: e.target.value,
 												})
 											}
-											className='bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400'
+											className='bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'
 										/>
 										<Input
 											type='number'
@@ -352,7 +352,7 @@ export default function Home() {
 													max: e.target.value,
 												})
 											}
-											className='bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400'
+											className='bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'
 										/>
 									</div>
 								</div>
@@ -367,29 +367,29 @@ export default function Home() {
 						{[...Array(10)].map((_, i) => (
 							<Card
 								key={i}
-								className='bg-slate-800 border-slate-700 overflow-hidden'>
+								className='bg-white border-gray-200 overflow-hidden shadow-sm'>
 								<CardContent className='p-0'>
-									<div className='w-full h-48 bg-slate-700 animate-pulse' />
+									<div className='w-full h-48 bg-gray-200 animate-pulse' />
 									<div className='p-4 space-y-3'>
-										<div className='h-4 w-3/4 bg-slate-700 rounded animate-pulse' />
-										<div className='h-3 w-1/2 bg-slate-700 rounded animate-pulse' />
-										<div className='h-6 w-1/3 bg-slate-700 rounded animate-pulse' />
+										<div className='h-4 w-3/4 bg-gray-200 rounded animate-pulse' />
+										<div className='h-3 w-1/2 bg-gray-200 rounded animate-pulse' />
+										<div className='h-6 w-1/3 bg-gray-200 rounded animate-pulse' />
 									</div>
 								</CardContent>
 							</Card>
 						))}
 					</div>
 				) : listings.length === 0 ? (
-					<Card className='bg-slate-800 border-slate-700'>
+					<Card className='bg-white border-gray-200 shadow-sm'>
 						<CardContent className='p-12 text-center'>
 							<TrendingUp
 								size={48}
-								className='mx-auto text-slate-600 mb-4'
+								className='mx-auto text-gray-400 mb-4'
 							/>
-							<h3 className='text-xl font-semibold text-white mb-2'>
+							<h3 className='text-xl font-semibold text-gray-900 mb-2'>
 								No Listings Found
 							</h3>
-							<p className='text-slate-400 mb-4'>
+							<p className='text-gray-600 mb-4'>
 								{hasActiveFilters
 									? "Try adjusting your filters to see more results."
 									: "No listings are available at the moment."}
@@ -398,7 +398,7 @@ export default function Home() {
 								<Button
 									onClick={clearFilters}
 									variant='outline'
-									className='border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent'>
+									className='border-gray-300 text-gray-700 hover:bg-gray-100'>
 									Clear Filters
 								</Button>
 							)}
@@ -411,9 +411,9 @@ export default function Home() {
 								key={listing._id}
 								href={`/listing/${listing._id}`}
 								className='group'>
-								<Card className='bg-slate-800 border-slate-700 hover:border-blue-500 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20 overflow-hidden h-full flex flex-col cursor-pointer'>
+								<Card className='bg-white border-gray-200 hover:border-blue-500 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 overflow-hidden h-full flex flex-col cursor-pointer'>
 									{/* Image */}
-									<div className='relative w-full h-48 overflow-hidden bg-linear-to-br from-slate-700 to-slate-900'>
+									<div className='relative w-full h-48 overflow-hidden bg-linear-to-br from-gray-100 to-gray-200'>
 										{listing.thumbnail ||
 										(listing.images &&
 											listing.images[0]) ? (
@@ -464,11 +464,11 @@ export default function Home() {
 									<CardContent className='p-4 flex-1 flex flex-col'>
 										{/* Title & Category */}
 										<div className='mb-3'>
-											<h3 className='text-white font-bold text-base mb-1 line-clamp-2 group-hover:text-blue-400 transition-colors'>
+											<h3 className='text-gray-900 font-bold text-base mb-1 line-clamp-2 group-hover:text-blue-600 transition-colors'>
 												{listing.title}
 											</h3>
-											<div className='flex items-center gap-2 text-xs text-slate-400'>
-												<span className='px-2 py-0.5 bg-slate-700/50 rounded'>
+											<div className='flex items-center gap-2 text-xs text-gray-600'>
+												<span className='px-2 py-0.5 bg-gray-100 rounded'>
 													{listing.category}
 												</span>
 											</div>
@@ -481,7 +481,7 @@ export default function Home() {
 													size={16}
 													className='text-blue-400'
 												/>
-												<span className='text-2xl font-bold text-white'>
+												<span className='text-2xl font-bold text-gray-900'>
 													{Number(
 														listing.price
 													).toLocaleString()}
@@ -493,8 +493,8 @@ export default function Home() {
 										<div className='grid grid-cols-2 gap-2 mb-3 flex-1'>
 											{listing.metrics
 												?.monthlyRevenue && (
-												<div className='bg-slate-700/30 rounded-lg p-2 border border-slate-600/50'>
-													<p className='text-[10px] text-slate-400 mb-0.5'>
+												<div className='bg-gray-50 rounded-lg p-2 border border-gray-200'>
+													<p className='text-[10px] text-gray-600 mb-0.5'>
 														Revenue
 													</p>
 													<p className='text-xs font-semibold text-green-400'>
@@ -508,8 +508,8 @@ export default function Home() {
 											)}
 											{listing.metrics
 												?.monthlyTraffic && (
-												<div className='bg-slate-700/30 rounded-lg p-2 border border-slate-600/50'>
-													<p className='text-[10px] text-slate-400 mb-0.5'>
+												<div className='bg-gray-50 rounded-lg p-2 border border-gray-200'>
+													<p className='text-[10px] text-gray-600 mb-0.5'>
 														Traffic
 													</p>
 													<p className='text-xs font-semibold text-blue-400'>
@@ -521,8 +521,8 @@ export default function Home() {
 												</div>
 											)}
 											{listing.metrics?.followers && (
-												<div className='bg-slate-700/30 rounded-lg p-2 border border-slate-600/50'>
-													<p className='text-[10px] text-slate-400 mb-0.5'>
+												<div className='bg-gray-50 rounded-lg p-2 border border-gray-200'>
+													<p className='text-[10px] text-gray-600 mb-0.5'>
 														Followers
 													</p>
 													<p className='text-xs font-semibold text-purple-400'>
@@ -534,8 +534,8 @@ export default function Home() {
 												</div>
 											)}
 											{listing.metrics?.age && (
-												<div className='bg-slate-700/30 rounded-lg p-2 border border-slate-600/50'>
-													<p className='text-[10px] text-slate-400 mb-0.5'>
+												<div className='bg-gray-50 rounded-lg p-2 border border-gray-200'>
+													<p className='text-[10px] text-gray-600 mb-0.5'>
 														Age
 													</p>
 													<p className='text-xs font-semibold text-orange-400'>
@@ -547,8 +547,8 @@ export default function Home() {
 												</div>
 											)}
 											{listing.details?.monetization && (
-												<div className='bg-slate-700/30 rounded-lg p-2 border border-slate-600/50'>
-													<p className='text-[10px] text-slate-400 mb-0.5'>
+												<div className='bg-gray-50 rounded-lg p-2 border border-gray-200'>
+													<p className='text-[10px] text-gray-600 mb-0.5'>
 														Monetization
 													</p>
 													<p className='text-xs font-semibold text-orange-400'>
@@ -562,9 +562,9 @@ export default function Home() {
 										</div>
 
 										{/* Bottom Info */}
-										<div className='flex items-center justify-between pt-3 border-t border-slate-700/50'>
+										<div className='flex items-center justify-between pt-3 border-t border-gray-200'>
 											{listing.metrics?.country && (
-												<div className='flex items-center gap-1 text-xs text-slate-400'>
+												<div className='flex items-center gap-1 text-xs text-gray-600'>
 													<MapPin size={12} />
 													<span>
 														{
@@ -574,7 +574,7 @@ export default function Home() {
 													</span>
 												</div>
 											)}
-											<div className='flex items-center gap-1 text-xs text-slate-400'>
+											<div className='flex items-center gap-1 text-xs text-gray-600'>
 												<Eye size={12} />
 												<span>
 													{listing.views || 0} views
@@ -591,7 +591,7 @@ export default function Home() {
 
 			{/* Features */}
 			<section className='max-w-7xl mx-auto px-4 md:px-8 py-16'>
-				<h2 className='text-3xl font-bold text-white mb-12 text-center'>
+				<h2 className='text-3xl font-bold text-gray-900 mb-12 text-center'>
 					Why Choose AssetHub?
 				</h2>
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
@@ -600,16 +600,16 @@ export default function Home() {
 						return (
 							<Card
 								key={index}
-								className='bg-slate-800 border-slate-700 hover:border-blue-500 transition-colors'>
+								className='bg-white border-gray-200 hover:border-blue-500 transition-colors shadow-sm'>
 								<CardContent className='p-6'>
 									<Icon
 										size={32}
 										className='text-blue-500 mb-4'
 									/>
-									<h3 className='font-bold text-white mb-2'>
+									<h3 className='font-bold text-gray-900 mb-2'>
 										{feature.title}
 									</h3>
-									<p className='text-slate-400 text-sm'>
+									<p className='text-gray-600 text-sm'>
 										{feature.description}
 									</p>
 								</CardContent>
@@ -621,24 +621,24 @@ export default function Home() {
 
 			{/* CTA Section */}
 			<section className='max-w-7xl mx-auto px-4 md:px-8 py-16'>
-				<div className='bg-linear-to-r from-blue-900 to-cyan-900 rounded-2xl p-12 text-center border border-blue-700'>
+				<div className='bg-linear-to-br from-blue-600 to-cyan-600 rounded-2xl p-12 text-center shadow-xl'>
 					<h2 className='text-3xl md:text-4xl font-bold text-white mb-4'>
 						Ready to Get Started?
 					</h2>
-					<p className='text-blue-100 mb-8 text-lg'>
+					<p className='text-white/90 mb-8 text-lg'>
 						Join thousands of digital entrepreneurs buying and
 						selling assets on AssetHub
 					</p>
 					<div className='flex flex-col sm:flex-row gap-4 justify-center'>
 						<Link href='/marketplace'>
-							<Button className='bg-white hover:bg-slate-100 text-blue-900 px-8 py-6 text-lg font-semibold'>
+							<Button className='bg-white hover:bg-gray-100 cursor-pointer text-blue-600 px-8 py-6 text-lg font-semibold'>
 								Start Browsing
 							</Button>
 						</Link>
 						<Link href='/guide'>
 							<Button
 								variant='outline'
-								className='border-white text-white hover:bg-white/10 px-8 py-6 text-lg bg-transparent'>
+								className='border-white text-gray-600 cursor-pointer hover:bg-white/20 px-8 py-6 text-lg'>
 								Learn How to Sell
 							</Button>
 						</Link>

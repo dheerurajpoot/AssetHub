@@ -2,34 +2,37 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { userContext } from "@/context/userContext";
 import { toast } from "sonner";
-import { X, Upload } from "lucide-react";
+import { X, Upload, Check, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const categories = [
-	"Website",
-	"YouTube Channel",
-	"Facebook Page",
-	"Instagram Page",
-	"TikTok Account",
-	"Twitter Account",
-	"Play Console",
-	"AdSense Dashboard",
-	"Shopify Store",
-	"Dropshipping Store",
-	"SaaS",
-	"Mobile App",
-	"Other",
+	{ id: "website", label: "Website" },
+	{ id: "youtube", label: "YouTube Channel" },
+	{ id: "facebook", label: "Facebook Page" },
+	{ id: "instagram", label: "Instagram Page" },
+	{ id: "tiktok", label: "TikTok Account" },
+	{ id: "twitter", label: "Twitter Account" },
+	{ id: "play-console", label: "Play Console" },
+	{ id: "adsense", label: "AdSense Dashboard" },
+	{ id: "shopify", label: "Shopify Store" },
+	{ id: "dropshipping", label: "Dropshipping Store" },
+	{ id: "saas", label: "SaaS" },
+	{ id: "mobile-app", label: "Mobile App" },
+	{ id: "other", label: "Other" },
+];
+
+const steps = [
+	{ id: 1, name: "Category" },
+	{ id: 2, name: "Details" },
+	{ id: 3, name: "Images" },
+	{ id: 4, name: "Metrics" },
+	{ id: 5, name: "Pricing" },
 ];
 
 type ListingFormState = {
@@ -68,6 +71,7 @@ export default function CreateListing() {
 	const { user } = userContext();
 	const [loading, setLoading] = useState(false);
 	const [uploadingImages, setUploadingImages] = useState(false);
+	const [currentStep, setCurrentStep] = useState(1);
 	const [formData, setFormData] = useState<ListingFormState>({
 		title: "",
 		description: "",
@@ -148,18 +152,15 @@ export default function CreateListing() {
 			toast.error(
 				`Maximum 6 images allowed. You already have ${formData.images.length} images.`
 			);
-			e.target.value = ""; // Reset input
+			e.target.value = "";
 			return;
 		}
 
 		setUploadingImages(true);
 
 		try {
-			// Upload all files in parallel for better performance
-			// Each file needs its own unique authentication token
 			const uploadPromises = files.map(async (file) => {
 				try {
-					// Get a fresh auth token for each file upload
 					const authRes = await fetch("/api/imagekit/auth");
 					if (!authRes.ok) {
 						throw new Error("Failed to get ImageKit auth");
@@ -209,10 +210,8 @@ export default function CreateListing() {
 				}
 			});
 
-			// Wait for all uploads to complete (using allSettled to handle individual failures)
 			const results = await Promise.allSettled(uploadPromises);
 
-			// Process results
 			const successfulUploads: string[] = [];
 			const failedUploads: string[] = [];
 
@@ -234,14 +233,12 @@ export default function CreateListing() {
 				);
 			}
 
-			// Show warning if some uploads failed
 			if (failedUploads.length > 0) {
 				toast.warning(
 					`${successfulUploads.length} uploaded, ${failedUploads.length} failed`
 				);
 			}
 
-			// Update state based on upload type
 			if (isThumbnail && successfulUploads.length > 0) {
 				setFormData((prev) => ({
 					...prev,
@@ -258,7 +255,6 @@ export default function CreateListing() {
 				);
 			}
 
-			// Reset input to allow selecting same files again
 			e.target.value = "";
 		} catch (error: any) {
 			console.error("Upload failed:", error);
@@ -284,11 +280,59 @@ export default function CreateListing() {
 		}));
 	};
 
+	const nextStep = () => {
+		if (currentStep === 1 && !formData.category) {
+			toast.error("Please select a category");
+			return;
+		}
+		if (currentStep === 2 && (!formData.title || !formData.description)) {
+			toast.error("Please fill in all required fields");
+			return;
+		}
+		if (currentStep < steps.length) {
+			setCurrentStep(currentStep + 1);
+		}
+	};
+
+	const prevStep = () => {
+		if (currentStep > 1) {
+			setCurrentStep(currentStep - 1);
+		}
+	};
+
+	const selectCategory = (categoryId: string) => {
+		const category = categories.find((c) => c.id === categoryId);
+		if (category) {
+			setFormData((prev) => ({ ...prev, category: category.label }));
+		}
+	};
+
+	// Categories that have followers/subscribers
+	const hasFollowers = () => {
+		const followersCategories = [
+			"YouTube Channel",
+			"Facebook Page",
+			"Instagram Page",
+			"Twitter Account",
+			"TikTok Account",
+		];
+		return followersCategories.includes(formData.category);
+	};
+
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+
+		// Only submit if on the last step
+		if (currentStep < steps.length) {
+			nextStep();
+			return;
+		}
+
 		setLoading(true);
 		if (!user) {
 			toast.error("User not found!");
+			setLoading(false);
+			return;
 		}
 
 		try {
@@ -305,480 +349,715 @@ export default function CreateListing() {
 			}
 		} catch (error) {
 			console.error("Failed to create listing:", error);
+			toast.error("Failed to create listing. Please try again.");
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	return (
-		<div className='min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-8'>
-			<div className='max-w-4xl mx-auto'>
-				<Card className='bg-slate-800 border-slate-700'>
-					<CardHeader>
-						<CardTitle className='text-white text-2xl'>
-							Create New Listing
+		<div className='min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-4 md:p-8'>
+			<div className='max-w-5xl mx-auto'>
+				<Card className='bg-white border-0 shadow-xl'>
+					<CardHeader className='border-b pb-6'>
+						<CardTitle className='text-3xl font-bold text-center text-gray-900'>
+							List Your Product
 						</CardTitle>
-						<CardDescription>
-							List your digital asset for sale
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<form onSubmit={handleSubmit} className='space-y-6'>
-							{/* Basic Info */}
-							<div className='space-y-4'>
-								<h3 className='text-lg font-semibold text-white'>
-									Basic Information
-								</h3>
 
-								<div>
-									<label className='block text-sm font-medium text-slate-300 mb-2'>
-										Title
-									</label>
-									<Input
-										name='title'
-										value={formData.title}
-										onChange={handleChange}
-										placeholder='e.g., High-Traffic Tech Blog'
-										className='bg-slate-700 border-slate-600 text-white'
-										required
-									/>
+						{/* Stepper */}
+						<div className='mt-8'>
+							<div className='max-w-3xl mx-auto'>
+								{/* Step circles and lines */}
+								<div className='flex items-center justify-between mb-3'>
+									{steps.map((step, index) => (
+										<div
+											key={step.id}
+											className='flex items-center flex-1'>
+											<div className='flex items-center w-full'>
+												{/* Left line */}
+												{index > 0 && (
+													<div
+														className={cn(
+															"flex-1 h-0.5",
+															currentStep >
+																step.id - 1
+																? "bg-red-500"
+																: "bg-gray-300"
+														)}
+													/>
+												)}
+												{/* Circle */}
+												<div
+													className={cn(
+														"w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all mx-2",
+														currentStep === step.id
+															? "bg-red-500 text-white scale-110"
+															: currentStep >
+															  step.id
+															? "bg-red-500 text-white"
+															: "bg-gray-200 text-gray-500"
+													)}>
+													{currentStep > step.id ? (
+														<Check className='w-5 h-5' />
+													) : (
+														step.id
+													)}
+												</div>
+												{/* Right line */}
+												{index < steps.length - 1 && (
+													<div
+														className={cn(
+															"flex-1 h-0.5",
+															currentStep >
+																step.id
+																? "bg-red-500"
+																: "bg-gray-300"
+														)}
+													/>
+												)}
+											</div>
+										</div>
+									))}
 								</div>
-
-								<div>
-									<label className='block text-sm font-medium text-slate-300 mb-2'>
-										Description
-									</label>
-									<textarea
-										name='description'
-										value={formData.description}
-										onChange={(
-											e: React.ChangeEvent<HTMLTextAreaElement>
-										) => handleChange(e)}
-										placeholder='Describe your asset in detail...'
-										className='w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500'
-										rows={4}
-										required
-									/>
-								</div>
-
-								<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Category
-										</label>
-										<select
-											name='category'
-											value={formData.category}
-											onChange={(
-												e: React.ChangeEvent<HTMLSelectElement>
-											) => handleChange(e)}
-											className='w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-500'
-											required>
-											<option value=''>
-												Select a category
-											</option>
-											{categories.map((cat) => (
-												<option key={cat} value={cat}>
-													{cat}
-												</option>
-											))}
-										</select>
-									</div>
-
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Price ($)
-										</label>
-										<Input
-											name='price'
-											type='number'
-											value={formData.price}
-											onChange={handleChange}
-											placeholder='0.00'
-											className='bg-slate-700 border-slate-600 text-white'
-											required
-										/>
-									</div>
+								{/* Step labels */}
+								<div className='flex items-center justify-between'>
+									{steps.map((step) => (
+										<div
+											key={step.id}
+											className='flex-1 text-center'>
+											<span
+												className={cn(
+													"text-xs font-medium",
+													currentStep === step.id
+														? "text-red-500"
+														: currentStep > step.id
+														? "text-gray-700"
+														: "text-gray-400"
+												)}>
+												{step.name}
+											</span>
+										</div>
+									))}
 								</div>
 							</div>
-
-							{/* Metrics */}
-							<div className='space-y-4'>
-								<h3 className='text-lg font-semibold text-white'>
-									Performance Metrics
-								</h3>
-
-								<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+						</div>
+					</CardHeader>
+					<CardContent className='p-8'>
+						<form onSubmit={handleSubmit} className='space-y-8'>
+							{/* Step 1: Category */}
+							{currentStep === 1 && (
+								<div className='space-y-6'>
 									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Link/URL
-										</label>
-										<Input
-											name='assetLink'
-											type='text'
-											value={formData.metrics.assetLink}
-											onChange={handleMetricsChange}
-											placeholder='https://example.com'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Country
-										</label>
-										<Input
-											name='country'
-											type='text'
-											value={formData.metrics.country}
-											onChange={handleMetricsChange}
-											placeholder='Country....'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Monthly Revenue ($)
-										</label>
-										<Input
-											name='monthlyRevenue'
-											type='number'
-											value={
-												formData.metrics.monthlyRevenue
-											}
-											onChange={handleMetricsChange}
-											placeholder='0'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Monthly Traffic/Reach
-										</label>
-										<Input
-											name='monthlyTraffic'
-											type='number'
-											value={
-												formData.metrics.monthlyTraffic
-											}
-											onChange={handleMetricsChange}
-											placeholder='0'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Followers/Subscribers
-										</label>
-										<Input
-											name='followers'
-											type='number'
-											value={formData.metrics.followers}
-											onChange={handleMetricsChange}
-											placeholder='0'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-										<p className='text-gray-300 my-1 text-xs'>
-											Note: This field is not for
-											websites.
+										<h2 className='text-2xl font-bold text-gray-900 mb-2'>
+											Category
+										</h2>
+										<p className='text-gray-600'>
+											Select the category that best fits
+											your product.
 										</p>
 									</div>
 
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Age (months)
-										</label>
-										<Input
-											name='age'
-											type='number'
-											value={formData.metrics.age}
-											onChange={handleMetricsChange}
-											placeholder='0'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-								</div>
-							</div>
-
-							{/* Details */}
-							<div className='space-y-4'>
-								<h3 className='text-lg font-semibold text-white'>
-									Additional Details
-								</h3>
-
-								<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Niche
-										</label>
-										<Input
-											name='niche'
-											value={formData.details.niche}
-											onChange={handleDetailsChange}
-											placeholder='e.g., Technology, Finance'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Monetization
-										</label>
-										<Input
-											name='monetization'
-											value={
-												formData.details.monetization
-											}
-											onChange={handleDetailsChange}
-											placeholder='e.g., AdSense, Sponsorships'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Traffic Source
-										</label>
-										<Input
-											name='trafficSource'
-											value={
-												formData.details.trafficSource
-											}
-											onChange={handleDetailsChange}
-											placeholder='e.g., Organic, Paid'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Growth Potential
-										</label>
-										<Input
-											name='growthPotential'
-											value={
-												formData.details.growthPotential
-											}
-											onChange={handleDetailsChange}
-											placeholder='e.g., High, Medium, Low'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Payment Received
-										</label>
-										<Input
-											name='paymentReceived'
-											value={
-												formData.details.paymentReceived
-											}
-											onChange={handleDetailsChange}
-											placeholder='e.g., 1, 2, 3'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Ad Manager Used (Yes/No)
-										</label>
-										<Input
-											name='adManager'
-											value={formData.details.adManager}
-											onChange={handleDetailsChange}
-											placeholder='e.g., Yes/No'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Domain Provider
-										</label>
-										<Input
-											name='domainProvider'
-											value={
-												formData.details.domainProvider
-											}
-											onChange={handleDetailsChange}
-											placeholder='e.g., Godaddy, Namecheap...'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Domain Expiry
-										</label>
-										<Input
-											name='domainExpiry'
-											value={
-												formData.details.domainExpiry
-											}
-											onChange={handleDetailsChange}
-											placeholder='e.g., Expiry date...'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Platform
-										</label>
-										<Input
-											name='platform'
-											value={formData.details.platform}
-											onChange={handleDetailsChange}
-											placeholder='e.g., WordPress, Blogger...'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-									<div>
-										<label className='block text-sm font-medium text-slate-300 mb-2'>
-											Any Issue (Limit/Policy)
-										</label>
-										<Input
-											name='issue'
-											value={formData.details.issue}
-											onChange={handleDetailsChange}
-											placeholder='e.g., Limit, Policy Issue...'
-											className='bg-slate-700 border-slate-600 text-white'
-										/>
-									</div>
-								</div>
-							</div>
-
-							{/* Images */}
-							<div className='space-y-4'>
-								<h3 className='text-lg font-semibold text-white'>
-									Images
-								</h3>
-
-								{/* Thumbnail Upload */}
-								<div>
-									<label className='block text-sm font-medium text-slate-300 mb-2'>
-										Thumbnail Image
-									</label>
-									<div className='flex items-center gap-4'>
-										<label className='flex-1 flex items-center justify-center border-2 border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition'>
-											<div className='text-center'>
-												<Upload className='w-6 h-6 text-slate-400 mx-auto mb-2' />
-												<span className='text-sm text-slate-400'>
-													Click to upload thumbnail
-												</span>
-											</div>
-											<input
-												type='file'
-												accept='image/*'
-												onChange={(e) =>
-													handleImageUpload(e, true)
+									<div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+										{categories.map((category) => (
+											<button
+												key={category.id}
+												type='button'
+												onClick={() =>
+													selectCategory(category.id)
 												}
-												disabled={uploadingImages}
-												className='hidden'
-											/>
-										</label>
-										{formData.thumbnail && (
-											<div className='relative w-24 h-24'>
-												<img
-													src={
-														formData.thumbnail ||
-														"/placeholder.svg"
-													}
-													alt='Thumbnail'
-													className='w-full h-full object-cover rounded-lg'
-												/>
-												<button
-													type='button'
-													onClick={removeThumbnail}
-													className='absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600'>
-													<X className='w-4 h-4 text-white' />
-												</button>
-											</div>
-										)}
+												className={cn(
+													"p-4 border-2 rounded-lg text-center font-medium transition-all hover:border-gray-400 hover:shadow-md",
+													formData.category ===
+														category.label
+														? "border-red-500 bg-red-50 text-red-700"
+														: "border-gray-200 bg-white text-gray-700"
+												)}>
+												{category.label}
+											</button>
+										))}
 									</div>
 								</div>
+							)}
 
-								{/* Additional Images Upload */}
-								<div>
-									<label className='block text-sm font-medium text-slate-300 mb-2'>
-										Additional Images (up to 6)
-									</label>
-									<label className='flex items-center justify-center border-2 border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition'>
-										<div className='text-center'>
-											<Upload className='w-6 h-6 text-slate-400 mx-auto mb-2' />
-											<span className='text-sm text-slate-400'>
-												Click to upload images (
-												{formData.images.length}/6)
-											</span>
+							{/* Step 2: Details */}
+							{currentStep === 2 && (
+								<div className='space-y-6'>
+									<div>
+										<h2 className='text-2xl font-bold text-gray-900 mb-2'>
+											Details
+										</h2>
+										<p className='text-gray-600'>
+											Provide basic information about your
+											product.
+										</p>
+									</div>
+
+									<div className='space-y-4'>
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Title
+											</label>
+											<Input
+												name='title'
+												value={formData.title}
+												onChange={handleChange}
+												placeholder='e.g., High-Traffic Tech Blog'
+												className='bg-white border-gray-300'
+												required
+											/>
 										</div>
-										<input
-											type='file'
-											accept='image/*'
-											multiple
-											onChange={(e) =>
-												handleImageUpload(e, false)
-											}
-											disabled={
-												uploadingImages ||
-												formData.images.length >= 6
-											}
-											className='hidden'
-										/>
-									</label>
 
-									{/* Image Preview Grid */}
-									{formData.images.length > 0 && (
-										<div className='grid grid-cols-2 md:grid-cols-3 gap-4 mt-4'>
-											{formData.images.map(
-												(image, index) => (
-													<div
-														key={index}
-														className='relative group'>
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Description
+											</label>
+											<textarea
+												name='description'
+												value={formData.description}
+												onChange={(
+													e: React.ChangeEvent<HTMLTextAreaElement>
+												) => handleChange(e)}
+												placeholder='Describe your asset in detail...'
+												className='w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
+												rows={5}
+												required
+											/>
+										</div>
+
+										<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+											<div>
+												<label className='block text-sm font-medium text-gray-700 mb-2'>
+													Link/URL
+												</label>
+												<Input
+													name='assetLink'
+													type='text'
+													value={
+														formData.metrics
+															.assetLink
+													}
+													onChange={
+														handleMetricsChange
+													}
+													placeholder='https://example.com'
+													className='bg-white border-gray-300'
+												/>
+											</div>
+											<div>
+												<label className='block text-sm font-medium text-gray-700 mb-2'>
+													Country
+												</label>
+												<Input
+													name='country'
+													type='text'
+													value={
+														formData.metrics.country
+													}
+													onChange={
+														handleMetricsChange
+													}
+													placeholder='Country....'
+													className='bg-white border-gray-300'
+												/>
+											</div>
+										</div>
+									</div>
+								</div>
+							)}
+
+							{/* Step 3: Images */}
+							{currentStep === 3 && (
+								<div className='space-y-6'>
+									<div>
+										<h2 className='text-2xl font-bold text-gray-900 mb-2'>
+											Images
+										</h2>
+										<p className='text-gray-600'>
+											Upload images to showcase your
+											product.
+										</p>
+									</div>
+
+									<div className='space-y-4'>
+										{/* Thumbnail Upload */}
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Thumbnail Image
+											</label>
+											<div className='flex items-center gap-4'>
+												<label
+													className={cn(
+														"flex-1 flex items-center justify-center border-2 border-dashed rounded-lg p-6 transition",
+														uploadingImages
+															? "border-red-500 bg-red-50 cursor-not-allowed"
+															: "border-gray-300 cursor-pointer hover:border-red-500"
+													)}>
+													<div className='text-center'>
+														{uploadingImages ? (
+															<>
+																<Loader2 className='w-6 h-6 text-red-500 mx-auto mb-2 animate-spin' />
+																<span className='text-sm text-red-600 font-medium'>
+																	Uploading...
+																</span>
+															</>
+														) : (
+															<>
+																<Upload className='w-6 h-6 text-gray-400 mx-auto mb-2' />
+																<span className='text-sm text-gray-500'>
+																	Click to
+																	upload
+																	thumbnail
+																</span>
+															</>
+														)}
+													</div>
+													<input
+														type='file'
+														accept='image/*'
+														onChange={(e) =>
+															handleImageUpload(
+																e,
+																true
+															)
+														}
+														disabled={
+															uploadingImages
+														}
+														className='hidden'
+													/>
+												</label>
+												{formData.thumbnail && (
+													<div className='relative w-24 h-24'>
 														<img
 															src={
-																image ||
+																formData.thumbnail ||
 																"/placeholder.svg"
 															}
-															alt={`Image ${
-																index + 1
-															}`}
-															className='w-full h-32 object-cover rounded-lg'
+															alt='Thumbnail'
+															className='w-full h-full object-cover rounded-lg'
 														/>
 														<button
 															type='button'
-															onClick={() =>
-																removeImage(
-																	index
-																)
+															onClick={
+																removeThumbnail
 															}
-															className='absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition'>
+															className='absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600'>
 															<X className='w-4 h-4 text-white' />
 														</button>
 													</div>
-												)
+												)}
+											</div>
+										</div>
+
+										{/* Additional Images Upload */}
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Additional Images (up to 6)
+											</label>
+											<label
+												className={cn(
+													"flex items-center justify-center border-2 border-dashed rounded-lg p-6 transition",
+													uploadingImages
+														? "border-red-500 bg-red-50 cursor-not-allowed"
+														: formData.images
+																.length >= 6
+														? "border-gray-300 bg-gray-50 cursor-not-allowed"
+														: "border-gray-300 cursor-pointer hover:border-red-500"
+												)}>
+												<div className='text-center'>
+													{uploadingImages ? (
+														<>
+															<Loader2 className='w-6 h-6 text-red-500 mx-auto mb-2 animate-spin' />
+															<span className='text-sm text-red-600 font-medium'>
+																Uploading...
+															</span>
+														</>
+													) : (
+														<>
+															<Upload className='w-6 h-6 text-gray-400 mx-auto mb-2' />
+															<span className='text-sm text-gray-500'>
+																Click to upload
+																images (
+																{
+																	formData
+																		.images
+																		.length
+																}
+																/6)
+															</span>
+														</>
+													)}
+												</div>
+												<input
+													type='file'
+													accept='image/*'
+													multiple
+													onChange={(e) =>
+														handleImageUpload(
+															e,
+															false
+														)
+													}
+													disabled={
+														uploadingImages ||
+														formData.images
+															.length >= 6
+													}
+													className='hidden'
+												/>
+											</label>
+
+											{/* Image Preview Grid */}
+											{formData.images.length > 0 && (
+												<div className='grid grid-cols-2 md:grid-cols-3 gap-4 mt-4'>
+													{formData.images.map(
+														(image, index) => (
+															<div
+																key={index}
+																className='relative group'>
+																<img
+																	src={
+																		image ||
+																		"/placeholder.svg"
+																	}
+																	alt={`Image ${
+																		index +
+																		1
+																	}`}
+																	className='w-full h-32 object-cover rounded-lg'
+																/>
+																<button
+																	type='button'
+																	onClick={() =>
+																		removeImage(
+																			index
+																		)
+																	}
+																	className='absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition'>
+																	<X className='w-4 h-4 text-white' />
+																</button>
+															</div>
+														)
+													)}
+												</div>
 											)}
 										</div>
-									)}
+									</div>
 								</div>
-							</div>
+							)}
 
-							{/* Submit */}
-							<div className='flex gap-4'>
-								<Button
-									type='submit'
-									disabled={loading || uploadingImages}
-									className='bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white'>
-									{loading
-										? "Creating..."
-										: uploadingImages
-										? "Uploading..."
-										: "Create Listing"}
-								</Button>
+							{/* Step 4: Metrics */}
+							{currentStep === 4 && (
+								<div className='space-y-6'>
+									<div>
+										<h2 className='text-2xl font-bold text-gray-900 mb-2'>
+											Metrics
+										</h2>
+										<p className='text-gray-600'>
+											Provide performance metrics for your
+											product.
+										</p>
+									</div>
+
+									<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Monthly Revenue ($)
+											</label>
+											<Input
+												name='monthlyRevenue'
+												type='number'
+												value={
+													formData.metrics
+														.monthlyRevenue
+												}
+												onChange={handleMetricsChange}
+												placeholder='0'
+												className='bg-white border-gray-300'
+											/>
+										</div>
+
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Monthly Traffic/Reach
+											</label>
+											<Input
+												name='monthlyTraffic'
+												type='number'
+												value={
+													formData.metrics
+														.monthlyTraffic
+												}
+												onChange={handleMetricsChange}
+												placeholder='0'
+												className='bg-white border-gray-300'
+											/>
+										</div>
+
+										{hasFollowers() && (
+											<div>
+												<label className='block text-sm font-medium text-gray-700 mb-2'>
+													Followers/Subscribers
+												</label>
+												<Input
+													name='followers'
+													type='number'
+													value={
+														formData.metrics
+															.followers
+													}
+													onChange={
+														handleMetricsChange
+													}
+													placeholder='0'
+													className='bg-white border-gray-300'
+												/>
+											</div>
+										)}
+
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Age (months)
+											</label>
+											<Input
+												name='age'
+												type='number'
+												value={formData.metrics.age}
+												onChange={handleMetricsChange}
+												placeholder='0'
+												className='bg-white border-gray-300'
+											/>
+										</div>
+
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Niche
+											</label>
+											<Input
+												name='niche'
+												value={formData.details.niche}
+												onChange={handleDetailsChange}
+												placeholder='e.g., Technology, Finance'
+												className='bg-white border-gray-300'
+											/>
+										</div>
+
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Monetization
+											</label>
+											<Input
+												name='monetization'
+												value={
+													formData.details
+														.monetization
+												}
+												onChange={handleDetailsChange}
+												placeholder='e.g., AdSense, Sponsorships'
+												className='bg-white border-gray-300'
+											/>
+										</div>
+
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Traffic Source
+											</label>
+											<Input
+												name='trafficSource'
+												value={
+													formData.details
+														.trafficSource
+												}
+												onChange={handleDetailsChange}
+												placeholder='e.g., Organic, Paid'
+												className='bg-white border-gray-300'
+											/>
+										</div>
+
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Growth Potential
+											</label>
+											<Input
+												name='growthPotential'
+												value={
+													formData.details
+														.growthPotential
+												}
+												onChange={handleDetailsChange}
+												placeholder='e.g., High, Medium, Low'
+												className='bg-white border-gray-300'
+											/>
+										</div>
+									</div>
+								</div>
+							)}
+
+							{/* Step 5: Pricing */}
+							{currentStep === 5 && (
+								<div className='space-y-6'>
+									<div>
+										<h2 className='text-2xl font-bold text-gray-900 mb-2'>
+											Pricing
+										</h2>
+										<p className='text-gray-600'>
+											Set your price and provide
+											additional details.
+										</p>
+									</div>
+
+									<div className='space-y-4'>
+										<div>
+											<label className='block text-sm font-medium text-gray-700 mb-2'>
+												Price ($)
+											</label>
+											<Input
+												name='price'
+												type='number'
+												value={formData.price}
+												onChange={handleChange}
+												placeholder='0.00'
+												className='bg-white border-gray-300'
+												required
+											/>
+										</div>
+
+										<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+											<div>
+												<label className='block text-sm font-medium text-gray-700 mb-2'>
+													Payment Received
+												</label>
+												<Input
+													name='paymentReceived'
+													value={
+														formData.details
+															.paymentReceived
+													}
+													onChange={
+														handleDetailsChange
+													}
+													placeholder='e.g., 1, 2, 3'
+													className='bg-white border-gray-300'
+												/>
+											</div>
+											<div>
+												<label className='block text-sm font-medium text-gray-700 mb-2'>
+													Ad Manager Used (Yes/No)
+												</label>
+												<Input
+													name='adManager'
+													value={
+														formData.details
+															.adManager
+													}
+													onChange={
+														handleDetailsChange
+													}
+													placeholder='e.g., Yes/No'
+													className='bg-white border-gray-300'
+												/>
+											</div>
+											<div>
+												<label className='block text-sm font-medium text-gray-700 mb-2'>
+													Domain Provider
+												</label>
+												<Input
+													name='domainProvider'
+													value={
+														formData.details
+															.domainProvider
+													}
+													onChange={
+														handleDetailsChange
+													}
+													placeholder='e.g., Godaddy, Namecheap...'
+													className='bg-white border-gray-300'
+												/>
+											</div>
+											<div>
+												<label className='block text-sm font-medium text-gray-700 mb-2'>
+													Domain Expiry
+												</label>
+												<Input
+													name='domainExpiry'
+													value={
+														formData.details
+															.domainExpiry
+													}
+													onChange={
+														handleDetailsChange
+													}
+													placeholder='e.g., Expiry date...'
+													className='bg-white border-gray-300'
+												/>
+											</div>
+											<div>
+												<label className='block text-sm font-medium text-gray-700 mb-2'>
+													Platform
+												</label>
+												<Input
+													name='platform'
+													value={
+														formData.details
+															.platform
+													}
+													onChange={
+														handleDetailsChange
+													}
+													placeholder='e.g., WordPress, Blogger...'
+													className='bg-white border-gray-300'
+												/>
+											</div>
+											<div>
+												<label className='block text-sm font-medium text-gray-700 mb-2'>
+													Any Issue (Limit/Policy)
+												</label>
+												<Input
+													name='issue'
+													value={
+														formData.details.issue
+													}
+													onChange={
+														handleDetailsChange
+													}
+													placeholder='e.g., Limit, Policy Issue...'
+													className='bg-white border-gray-300'
+												/>
+											</div>
+										</div>
+									</div>
+								</div>
+							)}
+
+							{/* Navigation Buttons */}
+							<div className='flex justify-between pt-6 border-t'>
 								<Button
 									type='button'
 									variant='outline'
-									onClick={() => router.back()}
-									className='border-slate-600 text-slate-300 hover:bg-slate-700'>
-									Cancel
+									onClick={prevStep}
+									disabled={currentStep === 1}
+									className='border-gray-300 text-gray-700 hover:bg-gray-50'>
+									Previous
 								</Button>
+								{currentStep < steps.length ? (
+									<Button
+										type='button'
+										onClick={nextStep}
+										className='bg-black text-white hover:bg-gray-800'>
+										Next
+									</Button>
+								) : (
+									<Button
+										type='submit'
+										disabled={loading || uploadingImages}
+										className='bg-black text-white hover:bg-gray-800'>
+										{loading
+											? "Creating..."
+											: uploadingImages
+											? "Uploading..."
+											: "Create Listing"}
+									</Button>
+								)}
 							</div>
 						</form>
 					</CardContent>
