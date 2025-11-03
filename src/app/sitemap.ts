@@ -3,7 +3,7 @@ import connectDB from "@/lib/mongodb";
 import Listing from "@/models/Listing";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-	const baseUrl = process.env.NEXT_PUBLIC_APP_URL!;
+	const baseUrl = "https://www.webdeelers.com";
 
 	// Static pages
 	const staticPages: MetadataRoute.Sitemap = [

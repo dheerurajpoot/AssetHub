@@ -20,7 +20,7 @@ export default function About() {
 			{/* Content */}
 			<div className='max-w-4xl mx-auto px-4 md:px-8 py-16'>
 				<h1 className='text-4xl md:text-5xl font-bold text-white mb-6'>
-					About AssetHub
+					About WebDeelers
 				</h1>
 
 				<div className='space-y-8 text-slate-300'>
@@ -29,7 +29,7 @@ export default function About() {
 							Our Mission
 						</h2>
 						<p className='leading-relaxed'>
-							AssetHub is a trusted marketplace for buying and
+							WebDeelers is a trusted marketplace for buying and
 							selling digital assets. We empower entrepreneurs and
 							digital investors to discover, evaluate, and acquire
 							high-quality digital properties with confidence.
@@ -38,7 +38,7 @@ export default function About() {
 
 					<section>
 						<h2 className='text-2xl font-bold text-white mb-4'>
-							Why Choose AssetHub?
+							Why Choose WebDeelers?
 						</h2>
 						<ul className='space-y-3'>
 							<li className='flex gap-3'>
@@ -115,9 +115,9 @@ export default function About() {
 						<p className='leading-relaxed'>
 							We are committed to maintaining the highest
 							standards of integrity, transparency, and customer
-							service. Every transaction on AssetHub is protected
-							by our comprehensive verification process and secure
-							payment system.
+							service. Every transaction on WebDeelers is
+							protected by our comprehensive verification process
+							and secure payment system.
 						</p>
 					</section>
 				</div>

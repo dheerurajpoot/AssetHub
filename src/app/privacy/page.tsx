@@ -93,7 +93,7 @@ export default function Privacy() {
 						</h2>
 						<p className='leading-relaxed'>
 							If you have any questions about this Privacy Policy,
-							please contact us at privacy@assethub.com
+							please contact us at evtnorg@gmail.com
 						</p>
 					</section>
 				</div>

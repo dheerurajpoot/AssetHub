@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Footer() {
@@ -8,12 +9,12 @@ export default function Footer() {
 					{/* Brand */}
 					<div>
 						<div className='flex items-center gap-2 mb-4'>
-							<div className='w-8 h-8 rounded-lg bg-linear-to-br from-blue-500 to-cyan-500 flex items-center justify-center'>
-								<span className='text-white font-bold'>W</span>
-							</div>
-							<span className='text-lg font-bold text-white'>
-								WebDeelers
-							</span>
+							<Image
+								src='/logo.png'
+								alt='WebDeelers'
+								width={180}
+								height={180}
+							/>
 						</div>
 						<p className='text-slate-400 text-sm'>
 							The trusted marketplace for buying and selling
@@ -87,7 +88,7 @@ export default function Footer() {
 							</li>
 							<li>
 								<a
-									href='mailto:support@webdeelers.com'
+									href='mailto:evtnorg@gmail.com'
 									className='text-slate-400 hover:text-white text-sm'>
 									Email Support
 								</a>

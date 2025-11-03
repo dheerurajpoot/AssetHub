@@ -11,7 +11,7 @@ import { AuthProvider } from "@/context/userContext";
 const geistSans = Geist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
+	metadataBase: new URL("https://www.webdeelers.com/"),
 	title: {
 		default: "WebDeelers - Buy & Sell Digital Assets | Trusted Marketplace",
 		template: "%s | WebDeelers",
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
 		siteName: "WebDeelers",
 		images: [
 			{
-				url: "/og-image.jpg",
+				url: "/og-image.png",
 				width: 1200,
 				height: 630,
 				alt: "WebDeelers - Digital Assets Marketplace",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
 		title: "WebDeelers - Buy & Sell Digital Assets",
 		description:
 			"The trusted marketplace for buying and selling digital assets. Discover verified digital properties with complete metrics.",
-		images: ["/og-image.jpg"],
+		images: ["/og-image.png"],
 		creator: "@webdeelers",
 		site: "@webdeelers",
 	},
@@ -81,9 +81,7 @@ export const metadata: Metadata = {
 			"max-snippet": -1,
 		},
 	},
-	verification: {
-		google: "xxxxxxxxxxxxxxxxxxxxxxxxxx",
-	},
+
 	alternates: {
 		canonical: "/",
 	},
@@ -98,10 +96,6 @@ export default function RootLayout({
 	return (
 		<html lang='en' suppressHydrationWarning>
 			<head suppressHydrationWarning>
-				<meta
-					name='google-site-verification'
-					content='xxxxxxxxxxxxxxxxxxxxxxxxxx'
-				/>
 				<meta
 					name='viewport'
 					content='width=device-width, initial-scale=1'
@@ -121,9 +115,8 @@ export default function RootLayout({
 							"@context": "https://schema.org",
 							"@type": "Organization",
 							name: "WebDeelers",
-							url: process.env.NEXT_PUBLIC_APP_URL!,
-							logo: `${process.env
-								.NEXT_PUBLIC_APP_URL!}/logo.png`,
+							url: "https://www.webdeelers.com/",
+							logo: "/logo.png",
 							description:
 								"Trusted marketplace for buying and selling digital assets",
 							sameAs: [
@@ -148,13 +141,13 @@ export default function RootLayout({
 							"@context": "https://schema.org",
 							"@type": "WebSite",
 							name: "WebDeelers",
-							url: process.env.NEXT_PUBLIC_APP_URL!,
+							url: "https://www.webdeelers.com/",
 							potentialAction: {
 								"@type": "SearchAction",
 								target: {
 									"@type": "EntryPoint",
-									urlTemplate: `${process.env
-										.NEXT_PUBLIC_APP_URL!}/marketplace?search={search_term_string}`,
+									urlTemplate:
+										"https://www.webdeelers.com/marketplace",
 								},
 								"query-input":
 									"required name=search_term_string",
@@ -173,7 +166,7 @@ export default function RootLayout({
 							name: "WebDeelers",
 							description:
 								"Buy and sell digital assets including websites, YouTube channels, social media accounts, mobile apps, and SaaS products",
-							url: process.env.NEXT_PUBLIC_APP_URL!,
+							url: "https://www.webdeelers.com/",
 							priceRange: "$$",
 						}),
 					}}
@@ -194,11 +187,11 @@ export default function RootLayout({
 						`,
 					}}
 				/>
-				<script
+				{/* <script
 					async
 					src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXX'
 					crossOrigin='anonymous'
-				/>
+				/> */}
 			</head>
 			<body
 				className={`${geistSans.className} bg-slate-900`}

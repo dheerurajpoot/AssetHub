@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
 import { userContext } from "@/context/userContext";
+import Image from "next/image";
 
 export default function Navbar() {
 	const router = useRouter();
@@ -23,14 +24,12 @@ export default function Navbar() {
 				<div className='flex justify-between items-center h-16'>
 					{/* Logo */}
 					<Link href='/' className='flex items-center gap-2'>
-						<div className='w-8 h-8 rounded-lg bg-linear-to-br from-blue-500 to-cyan-500 flex items-center justify-center'>
-							<span className='text-white font-bold text-lg'>
-								W
-							</span>
-						</div>
-						<span className='text-xl font-bold text-white sm:inline'>
-							WebDeelers
-						</span>
+						<Image
+							src='/logo.png'
+							alt='WebDeelers'
+							width={180}
+							height={180}
+						/>
 					</Link>
 
 					{/* Desktop Menu */}

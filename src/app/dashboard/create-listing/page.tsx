@@ -145,54 +145,126 @@ export default function CreateListing() {
 		if (files.length === 0) return;
 
 		if (!isThumbnail && formData.images.length + files.length > 6) {
-			alert("Maximum 6 images allowed");
+			toast.error(
+				`Maximum 6 images allowed. You already have ${formData.images.length} images.`
+			);
+			e.target.value = ""; // Reset input
 			return;
 		}
 
 		setUploadingImages(true);
 
 		try {
-			const authRes = await fetch("/api/imagekit/auth");
-			if (!authRes.ok) throw new Error("Failed to get ImageKit auth");
-			const { token, expire, signature, publicKey } =
-				await authRes.json();
+			// Upload all files in parallel for better performance
+			// Each file needs its own unique authentication token
+			const uploadPromises = files.map(async (file) => {
+				try {
+					// Get a fresh auth token for each file upload
+					const authRes = await fetch("/api/imagekit/auth");
+					if (!authRes.ok) {
+						throw new Error("Failed to get ImageKit auth");
+					}
+					const { token, expire, signature, publicKey } =
+						await authRes.json();
 
-			const uploadedUrls: string[] = [];
+					const form = new FormData();
+					form.append("file", file);
+					form.append("fileName", file.name);
+					form.append("publicKey", publicKey);
+					form.append("signature", signature);
+					form.append("expire", String(expire));
+					form.append("token", token);
+					form.append("useUniqueFileName", "true");
 
-			for (const file of files) {
-				const form = new FormData();
-				form.append("file", file);
-				form.append("fileName", file.name);
-				form.append("publicKey", publicKey);
-				form.append("signature", signature);
-				form.append("expire", String(expire));
-				form.append("token", token);
-				form.append("useUniqueFileName", "true");
+					const uploadRes = await fetch(
+						"https://upload.imagekit.io/api/v1/files/upload",
+						{ method: "POST", body: form }
+					);
 
-				const uploadRes = await fetch(
-					"https://upload.imagekit.io/api/v1/files/upload",
-					{ method: "POST", body: form }
+					if (!uploadRes.ok) {
+						const errorData = await uploadRes
+							.json()
+							.catch(() => ({}));
+						throw new Error(
+							errorData.message || `Failed to upload ${file.name}`
+						);
+					}
+
+					const data = await uploadRes.json();
+					if (data && data.url) {
+						return {
+							success: true,
+							url: data.url,
+							fileName: file.name,
+						};
+					}
+					throw new Error(`No URL returned for ${file.name}`);
+				} catch (error: any) {
+					console.error(`Upload failed for ${file.name}:`, error);
+					return {
+						success: false,
+						fileName: file.name,
+						error: error.message,
+					};
+				}
+			});
+
+			// Wait for all uploads to complete (using allSettled to handle individual failures)
+			const results = await Promise.allSettled(uploadPromises);
+
+			// Process results
+			const successfulUploads: string[] = [];
+			const failedUploads: string[] = [];
+
+			results.forEach((result, index) => {
+				if (result.status === "fulfilled" && result.value.success) {
+					successfulUploads.push(result.value.url);
+				} else {
+					const fileName =
+						result.status === "fulfilled"
+							? result.value.fileName
+							: files[index]?.name || `File ${index + 1}`;
+					failedUploads.push(fileName);
+				}
+			});
+
+			if (successfulUploads.length === 0) {
+				throw new Error(
+					"No images were uploaded successfully. Please try again."
 				);
-
-				if (!uploadRes.ok) throw new Error("Image upload failed");
-				const data = await uploadRes.json();
-				if (data && data.url) uploadedUrls.push(data.url);
 			}
 
-			if (isThumbnail && uploadedUrls.length > 0) {
-				setFormData((prev) => ({
-					...prev,
-					thumbnail: uploadedUrls[0],
-				}));
-			} else if (uploadedUrls.length > 0) {
-				setFormData((prev) => ({
-					...prev,
-					images: [...prev.images, ...uploadedUrls],
-				}));
+			// Show warning if some uploads failed
+			if (failedUploads.length > 0) {
+				toast.warning(
+					`${successfulUploads.length} uploaded, ${failedUploads.length} failed`
+				);
 			}
-		} catch (error) {
+
+			// Update state based on upload type
+			if (isThumbnail && successfulUploads.length > 0) {
+				setFormData((prev) => ({
+					...prev,
+					thumbnail: successfulUploads[0],
+				}));
+				toast.success("Thumbnail uploaded successfully!");
+			} else if (successfulUploads.length > 0) {
+				setFormData((prev) => ({
+					...prev,
+					images: [...prev.images, ...successfulUploads],
+				}));
+				toast.success(
+					`${successfulUploads.length} image(s) uploaded successfully!`
+				);
+			}
+
+			// Reset input to allow selecting same files again
+			e.target.value = "";
+		} catch (error: any) {
 			console.error("Upload failed:", error);
-			alert("Failed to upload images");
+			toast.error(
+				error?.message || "Failed to upload images. Please try again."
+			);
 		} finally {
 			setUploadingImages(false);
 		}
