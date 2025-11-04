@@ -27,7 +27,6 @@ export default function Dashboard() {
 	const { user } = userContext();
 	const [profile, setProfile] = useState<any>();
 	const [listings, setListings] = useState([]);
-	const [bids, setBids] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [selectedListing, setSelectedListing] = useState<any>(null);
 	const [showPreview, setShowPreview] = useState(false);
@@ -416,7 +415,7 @@ export default function Dashboard() {
 																	)
 																}
 																size='sm'
-																className='bg-transparent cursor-pointer border-slate-500 text-white hover:bg-slate-600 gap-1'>
+																className='bg-transparent cursor-pointer border-slate-500 text-slate-600 hover:bg-slate-600 hover:text-white gap-1'>
 																<Edit2
 																	size={16}
 																/>
@@ -433,7 +432,7 @@ export default function Dashboard() {
 																	deleting ===
 																	listing._id
 																}
-																className='px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-1 disabled:opacity-50'>
+																className='px-3 py-1 cursor-pointer bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium transition-colors flex items-center gap-1 disabled:opacity-50'>
 																<Trash2
 																	size={16}
 																/>

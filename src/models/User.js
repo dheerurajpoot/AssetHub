@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import "./Listing";
 
 const userSchema = new mongoose.Schema(
 	{

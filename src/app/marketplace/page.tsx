@@ -232,7 +232,7 @@ export default function Marketplace() {
 													?.monthlyRevenue && (
 													<div className='bg-gray-50 rounded-lg p-2 border border-gray-200'>
 														<p className='text-[10px] text-gray-600 mb-0.5'>
-															Revenue
+															Revenue/Month
 														</p>
 														<p className='text-xs font-semibold text-green-400'>
 															$
@@ -247,7 +247,7 @@ export default function Marketplace() {
 													?.monthlyTraffic && (
 													<div className='bg-gray-50 rounded-lg p-2 border border-gray-200'>
 														<p className='text-[10px] text-gray-600 mb-0.5'>
-															Traffic
+															Traffic/Month
 														</p>
 														<p className='text-xs font-semibold text-blue-400'>
 															{Number(

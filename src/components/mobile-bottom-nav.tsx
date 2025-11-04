@@ -26,7 +26,11 @@ export default function MobileBottomNav() {
 			label: "Sell",
 			href: user ? "/dashboard/create-listing" : "/login",
 		},
-		{ icon: User, label: "Account", href: user ? "/dashboard" : "/login" },
+		{
+			icon: User,
+			label: "Dashboard",
+			href: user ? "/dashboard" : "/login",
+		},
 	];
 
 	return (

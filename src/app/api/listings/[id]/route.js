@@ -71,6 +71,11 @@ export async function PUT(request) {
 		const updated = await Listing.findByIdAndUpdate(id, updateData, {
 			new: true,
 		});
+		if (updated.status === "sold") {
+			const user = await User.findById(userId);
+			user.totalSales += listing.price;
+			await user.save();
+		}
 
 		return NextResponse.json({ success: true, listing: updated });
 	} catch (error) {

@@ -72,7 +72,7 @@ export default function Guide() {
 								className='bg-white border-gray-200 shadow-sm'>
 								<CardHeader>
 									<div className='flex items-center gap-4'>
-										<div className='w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold'>
+										<div className='w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold'>
 											{index + 1}
 										</div>
 										<CardTitle className='text-gray-900'>

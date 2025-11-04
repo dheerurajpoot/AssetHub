@@ -391,7 +391,7 @@ export default function ListingDetail({
 
 						{/* Image Gallery - Masonry */}
 						{listing?.images && listing.images.length > 0 && (
-							<Card className='bg-white border-gray-200 mt-6 shadow-sm'>
+							<Card className='bg-gray-100 border-gray-200 mt-6 shadow-sm'>
 								<CardHeader>
 									<CardTitle className='text-gray-900'>
 										Gallery
@@ -465,7 +465,7 @@ export default function ListingDetail({
 									${listing.price.toLocaleString()}
 								</p>
 								{listing.status === "sold" ? (
-									<h2 className='text-red-400 text-3xl font-bold'>
+									<h2 className='text-red-400 text-3xl font-black'>
 										Out Of Stock
 									</h2>
 								) : (
@@ -744,7 +744,7 @@ export default function ListingDetail({
 											Sales
 										</p>
 										<p className='font-bold text-gray-900'>
-											{listing.seller?.totalSales || 0}
+											${listing.seller?.totalSales || 0}
 										</p>
 									</div>
 									<div>

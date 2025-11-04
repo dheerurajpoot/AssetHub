@@ -39,7 +39,6 @@ export async function GET(request) {
 export async function PUT(request) {
 	try {
 		const { listingId, action, adminId } = await request.json();
-		console.log(listingId, action, adminId);
 
 		await connectDB();
 		const adminNote = "Have an issue, contact to admin on +917755089819";
@@ -92,6 +91,9 @@ export async function PUT(request) {
 			const listing = await Listing.findByIdAndUpdate(listingId, {
 				status: "sold",
 			}).populate("seller", "name email");
+			const user = await User.findById(listing.seller._id);
+			user.totalSales += listing.price;
+			await user.save();
 			// Send email notification to seller about status update
 			const emailContent = generateListingStatusUpdate(
 				listing.title,
